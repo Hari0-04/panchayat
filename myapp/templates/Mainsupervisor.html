@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>பஞ்சாயத்து - Main Page</title>
+<style>
+:root {
+  --bg-gradient: linear-gradient(135deg, #0a0d14, #121722, #1c2433);
+  --primary: #3e8cff;       /* Neon Blue */
+  --secondary: #b36bff;     /* Neon Purple */
+  --accent: #ff4081;        /* Pink */
+  --text-light: #ffffff;    /* White */
+  --text-grey: #c7c7c7;     /* Dim Grey */
+  --card-bg: rgba(255,255,255,0.05); /* Glassmorphic Card */
+  --card-blur: blur(10px);
+}
+
+/* RESET */
+* { box-sizing: border-box; margin:0; padding:0; font-family:"Noto Sans Tamil", sans-serif; }
+
+body {
+  background: var(--bg-gradient);
+  color: var(--text-light);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  animation: fadeIn 1s ease-in-out;
+}
+
+/* Fade-in */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: var(--card-blur);
+  border-bottom: 1px solid var(--primary);
+}
+
+header h1 {
+  font-size: 26px;
+  font-weight: bold;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Profile Circle */
+.profile-container {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid var(--primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.3s;
+}
+.profile-container:hover {
+  box-shadow: 0 0 10px var(--primary);
+}
+
+/* Dashboard Buttons */
+.dashboard {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 30px 40px;
+  gap: 30px;
+  justify-content: center;
+}
+
+.dash-btn {
+  flex: 1 1 200px;
+  min-width: 200px;
+  padding: 25px;
+  background: var(--card-bg);
+  backdrop-filter: var(--card-blur);
+  color: var(--text-light);
+  font-weight: bold;
+  font-size: 16px;
+  text-align: center;
+  border: 1px solid var(--primary);
+  border-radius: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.dash-btn:hover {
+  border-color: var(--secondary);
+  box-shadow: 0 0 15px var(--primary);
+  background: rgba(255,255,255,0.08);
+}
+
+/* Reports Section */
+.reports-section {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 40px 40px 40px;
+  gap: 20px;
+  justify-content: center;
+}
+.report-card {
+  flex: 1 1 250px;
+  background: var(--card-bg);
+  backdrop-filter: var(--card-blur);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transition: 0.3s;
+}
+.report-card:hover {
+  box-shadow: 0 0 20px var(--secondary);
+}
+.report-card .report-icon {
+  font-size: 28px;
+  margin-bottom: 10px;
+  color: var(--accent);
+}
+.report-card .report-title {
+  font-weight: bold;
+  font-size: 14px;
+  color: var(--text-light);
+  margin-bottom: 5px;
+}
+.report-card .report-count {
+  font-size: 24px;
+  font-weight: bold;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Profile Popup */
+.popup-overlay {
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background: rgba(0,0,0,0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.popup-card {
+  background: var(--card-bg);
+  border-radius: 20px;
+  padding: 30px;
+  width: 350px;
+  max-width: 90%;
+  text-align: center;
+  backdrop-filter: var(--card-blur);
+  box-shadow: 0 0 20px var(--primary);
+}
+.popup-card img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+  object-fit: cover;
+}
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  color: var(--primary);
+}
+.logout-btn {
+  background: var(--accent);
+  color: var(--text-light);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 25px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: 0.3s;
+}
+.logout-btn:hover { background: var(--primary); }
+
+/* Responsive */
+@media(max-width: 900px){
+  .dashboard { flex-direction: column; padding: 20px; gap: 20px; }
+  .dash-btn { width: 100%; }
+  .reports-section { flex-direction: column; padding: 0 20px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Panchayat</h1>
+  <div class="header-right">
+    <span>{{ supervisor_username }}</span>
+    <div class="profile-container" id="profileTrigger">
+      <img src="https://via.placeholder.com/50" alt="Profile">
+    </div>
+  </div>
+</header>
+
+<!-- Dashboard Buttons -->
+<div class="dashboard">
+  <a href="{% url 'Mainsupervisor' %}"><button class="dash-btn">🏠 Home</button></a>
+  <a href="{% url 'complaints_supervisor' %}"><button class="dash-btn">📝 Complaints</button></a>
+  <a href="{% url 'requests_supervisor' %}"><button class="dash-btn">📋 Requests</button></a>
+  <a href="{% url 'notification_page' %}"><button class="dash-btn">🔔 Notifications</button></a>
+</div>
+
+<!-- Reports -->
+<div class="reports-section">
+  <div class="report-card">
+    <div class="report-icon">📝</div>
+    <div class="report-title">Total Complaints</div>
+    <div class="report-count">{{ total_complaints }}</div>
+  </div>
+  <div class="report-card">
+    <div class="report-icon">📋</div>
+    <div class="report-title">Total Requests</div>
+    <div class="report-count">{{ total_requests }}</div>
+  </div>
+</div>
+
+<!-- Profile Popup -->
+<div class="popup-overlay" id="profilePopup">
+  <div class="popup-card">
+    <span class="close-btn" id="closePopup">&times;</span>
+    <img src="https://via.placeholder.com/100" alt="Profile" id="profileImgLarge">
+    <h3>{{ supervisor_username }}</h3>
+    <p>📞 {{ user.phoneno }}</p>
+    <p>🏠 {{ user.address }}</p>
+    <a href="{% url 'logout3' %}"><button class="logout-btn">Logout</button></a>
+  </div>
+</div>
+
+<script>
+  // Profile Popup
+  const profileTrigger = document.getElementById("profileTrigger");
+  const profilePopup = document.getElementById("profilePopup");
+  const closePopup = document.getElementById("closePopup");
+
+  profileTrigger.addEventListener("click", () => profilePopup.style.display = "flex");
+  closePopup.addEventListener("click", () => profilePopup.style.display = "none");
+</script>
+
+</body>
+</html>

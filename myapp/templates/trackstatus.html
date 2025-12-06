@@ -1,0 +1,228 @@
+<!-- {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Track Status</title>
+    <style>
+        :root {
+            --bg: #d5f5d5;
+            --accent: #1b4e1b;
+            --header1: #a2eba2;
+            --header2: #5cc75c;
+            --header3: #1b4e1b;
+            --line-bg: #c8e6c8;
+            --line-active: #5cc75c;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: var(--bg);
+            padding: 15px;
+            color: var(--header3);
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 12px;
+            margin-bottom: 15px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h2 {
+            color: var(--header3);
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        h3 {
+            color: var(--accent);
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .progress-container {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0 10px;
+        }
+
+        /* background line */
+        .progress-container::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 4px;
+            background: var(--line-bg);
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        /* active progress line */
+        .progress {
+            position: absolute;
+            top: 50%;
+            left: 0%;
+            height: 4px;
+            background: var(--line-active);
+            transform: translateY(-50%);
+            z-index: 2;
+            transition: width 0.3s ease;
+        }
+
+        .circle {
+            width: 28px;
+            height: 28px;
+            background: var(--line-bg);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 13px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .circle.active {
+            background: var(--header2);
+        }
+
+        .status-label {
+            text-align: center;
+            font-size: 11px;
+            margin-top: 5px;
+            color: var(--accent);
+            max-width: 70px;
+        }
+
+        .success-msg {
+            text-align: center;
+            font-weight: bold;
+            color: var(--header2);
+            margin-top: 8px;
+            font-size: 14px;
+        }
+
+        .section-title {
+            background: var(--header1);
+            color: var(--header3);
+            padding: 8px;
+            border-radius: 5px 5px 0 0;
+            margin: 20px auto 8px auto;
+            max-width: 600px;
+        }
+        .back-btn {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      font-size: 30px;
+      color: black;
+      /* background:rgb(0,0,0,0.3); */
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+    .back-btn:hover {
+      background: #a2eba2(0,0,0,0.5);
+    }
+    </style>
+</head>
+<body>
+      <span class="back-btn" onclick="history.back()">🏚️</span>
+    <div class="section-title"><h2>Complaint Status</h2></div>
+    {% for c in complaints %}
+    <div class="card">
+        <h3>Complaint ID: {{ c.id }} | {{ c.complaint_type }}</h3>
+        {% with c.status as st %}
+        <div class="progress-container">
+            <div class="progress" style="
+                width:
+                {% if st == 'unverified' %}0%
+                {% elif st == 'verified' %}33%
+                {% elif st == 'pending' %}66%
+                {% elif st == 'complete' %}100%
+                {% else %}0%
+                {% endif %}
+            "></div>
+
+            <div>
+                <div class="circle {% if st == 'unverified' or st == 'verified' or st == 'pending' or st == 'complete' %}active{% endif %}">1</div>
+                <div class="status-label">Complaint Raised</div>
+            </div>
+            <div>
+                <div class="circle {% if st == 'verified' or st == 'pending' or st == 'complete' %}active{% endif %}">2</div>
+                <div class="status-label">Supervisor Verified</div>
+            </div>
+            <div>
+                <div class="circle {% if st == 'pending' or st == 'complete' %}active{% endif %}">3</div>
+                <div class="status-label">Compalint Accepted</div>
+            </div>
+            <div>
+                <div class="circle {% if st == 'complete' %}active{% endif %}">4</div>
+                <div class="status-label">Complaint Finished</div>
+            </div>
+        </div>
+        {% endwith %}
+
+        {% if c.status == 'complete' %}
+        <div class="success-msg">✅ Complaint Success!</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    <div class="section-title"><h2>Request Status</h2></div>
+    {% for r in requests_data %}
+    <div class="card">
+        <h3>Request ID: {{ r.id }} | {{ r.request_type }}</h3>
+        {% with r.status as st %}
+        <div class="progress-container">
+            <div class="progress" style="
+                width:
+                {% if st == 'unverified' %}0%
+                {% elif st == 'verified' %}33%
+                {% elif st == 'pending' %}66%
+                {% elif st == 'complete' %}100%
+                {% else %}0%
+                {% endif %}
+            "></div>
+
+            <div>
+                <div class="circle {% if st == 'unverified' or st == 'verified' or st == 'pending' or st == 'complete' %}active{% endif %}">1</div>
+                <div class="status-label">Request Raised</div>
+            </div>
+            <div>
+                <div class="circle {% if st == 'verified' or st == 'pending' or st == 'complete' %}active{% endif %}">2</div>
+                <div class="status-label">Supervisor Verified</div>
+            </div>
+            <div>
+                <div class="circle {% if st == 'pending' or st == 'complete' %}active{% endif %}">3</div>
+                <div class="status-label">Request Accepted</div>
+            </div>
+            <div>
+                <div class="circle {% if st == 'complete' %}active{% endif %}">4</div>
+                <div class="status-label">Request Finished</div>
+            </div>
+        </div>
+        {% endwith %}
+
+        {% if r.status == 'complete' %}
+        <div class="success-msg">✅ Request Success!</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+</body>
+</html> -->

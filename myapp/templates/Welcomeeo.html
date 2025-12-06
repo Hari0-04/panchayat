@@ -1,0 +1,128 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome | Courtallam Town Panchayat</title>
+
+<style>
+:root {
+  --bg-gradient: linear-gradient(135deg, #0a0d14, #121722, #1c2433);
+  --glass-bg: rgba(255,255,255,0.07);
+  --glass-blur: blur(14px);
+  --border-glow: rgba(62,140,255,0.45);
+  --text-title: #ffffff;
+  --text-secondary: #c7c7c7;
+  --neon-blue: #3e8cff;
+  --neon-purple: #b36bff;
+}
+
+/* Reset & body */
+* { margin:0; padding:0; box-sizing:border-box; font-family:"Arial", sans-serif; }
+body, html {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: var(--bg-gradient);
+  overflow: hidden;
+  animation: fadeIn 1.2s ease-in-out;
+}
+
+/* Fade-in */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Logo & Town Image */
+.logo {
+  width: 150px;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 0 12px var(--neon-blue));
+}
+.town-image {
+  width: 260px;
+  margin-bottom: 25px;
+  border-radius: 12px;
+  box-shadow: 0 0 18px var(--neon-purple);
+  backdrop-filter: var(--glass-blur);
+  border: 1.5px solid var(--border-glow);
+}
+
+/* Text */
+h1, h2 { margin:6px 0; color: var(--text-title); }
+h1 {
+  font-size: 28px;
+  font-weight: bold;
+  letter-spacing: 0.4px;
+  background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+h2 {
+  font-size: 18px;
+  color: var(--text-secondary);
+  opacity: 0.85;
+}
+
+/* PARTICLES */
+.particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 1;
+}
+.particles span {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: var(--neon-blue);
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: float 6s linear infinite;
+}
+@keyframes float {
+  0% { transform: translateY(0px) scale(1); }
+  100% { transform: translateY(-120vh) scale(0.5); }
+}
+</style>
+</head>
+<body>
+
+<!-- PARTICLES -->
+<div class="particles">
+<script>
+(function(){
+  const container = document.currentScript.parentElement;
+  const count = 18;
+  for(let i=0;i<count;i++){
+    const s = document.createElement('span');
+    s.style.left = (Math.random()*90 + 5).toFixed(2) + '%';
+    s.style.animationDuration = (3 + Math.random()*5).toFixed(2) + 's';
+    container.appendChild(s);
+  }
+})();
+</script>
+</div>
+
+<!-- Logo & Town Image -->
+<img src="{% static 'images/taminadulogo.png' %}" class="logo" alt="Tamil Nadu Logo">
+<img src="{% static 'images/town1.jpg' %}" class="town-image" alt="Town Image">
+
+<!-- Text -->
+<h2>Welcome To</h2>
+<h1>Courtallam Town Panchayat</h1>
+<h2>EO App</h2>
+
+<script>
+  setTimeout(() => {
+    window.location.href = "{% url 'EOlogin' %}";
+  }, 3000);
+</script>
+
+</body>
+</html>

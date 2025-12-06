@@ -1,0 +1,223 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome Page – Courtallam Town Panchayat</title>
+
+<!-- INTER FONT -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg-gradient: linear-gradient(135deg, #0a0d14, #121722, #1c2433);
+  --glass-bg: rgba(255,255,255,0.07);
+  --glass-blur: blur(14px);
+  --border-glow: rgba(62,140,255,0.45);
+  --text-title: #ffffff;
+  --text-secondary: #c7c7c7;
+  --neon-blue: #3e8cff;
+  --neon-purple: #b36bff;
+  --card-shadow: 0 0 20px rgba(0,0,0,0.35);
+  --hover-shadow: 0 0 25px rgba(62,140,255,0.55);
+}
+
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+body {
+  height: 100vh;
+  background: var(--bg-gradient);
+  overflow-x: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+/* PARTICLES */
+.particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 1;
+}
+.particles span {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: var(--neon-blue);
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: float 6s linear infinite;
+}
+@keyframes float {
+  0% { transform: translateY(0px) scale(1); }
+  100% { transform: translateY(-120vh) scale(0.5); }
+}
+
+/* LOGO */
+.corner-logo {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  width: 80px;
+  z-index: 5;
+  opacity: 0.95;
+  filter: drop-shadow(0 0 12px var(--neon-blue));
+}
+
+/* LEFT SIDE BANNER */
+.left-banner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 220px;
+  background: url("{% static 'images/town1.jpg' %}") center/cover no-repeat;
+  filter: brightness(0.6);
+  z-index: 2;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  box-shadow: 0 0 25px rgba(62,140,255,0.3);
+}
+
+/* MAIN CENTER WRAPPER */
+.container {
+  position: relative;
+  margin-left: 260px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 3;
+  padding: 20px;
+  animation: fadeIn 1s forwards;
+}
+
+/* GLASS CARDS */
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 240px);
+  gap: 25px;
+  margin-top: 20px;
+}
+.role-card {
+  padding: 25px;
+  text-align: center;
+  border-radius: 18px;
+  backdrop-filter: var(--glass-blur);
+  background: var(--glass-bg);
+  border: 1.5px solid var(--border-glow);
+  cursor: pointer;
+  transition: 0.3s;
+  font-weight: 600;
+  color: var(--text-title);
+  box-shadow: var(--card-shadow);
+}
+.role-card:hover {
+  transform: scale(1.07);
+  box-shadow: var(--hover-shadow);
+  border-color: var(--neon-purple);
+}
+
+/* TITLE */
+.welcome-title {
+  text-align: center;
+  margin-bottom: 10px;
+}
+.welcome-title h2 {
+  color: var(--text-secondary);
+  font-size: 20px;
+  font-weight: 400;
+}
+.welcome-title h1 {
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* FADE IN ANIMATION */
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(10px);}
+  100% { opacity: 1; transform: translateY(0);}
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .container { margin-left: 230px; }
+  .role-grid { grid-template-columns: repeat(2, 200px); }
+}
+@media (max-width: 768px) {
+  .left-banner { width: 180px; }
+  .container { margin-left: 200px; }
+  .role-grid { grid-template-columns: repeat(1, 280px); }
+}
+@media (max-width: 600px) {
+  body { overflow-y: auto; }
+  .left-banner { display: none; }
+  .corner-logo { width: 60px; right: 10px; }
+  .container { margin-left: 0; margin-top: 80px; height: auto; }
+  .welcome-title h1 { font-size: 22px; }
+  .role-grid { grid-template-columns: repeat(1, 250px); }
+}
+@media (max-width: 400px) {
+  .role-grid { grid-template-columns: repeat(1, 200px); }
+}
+</style>
+
+
+</head>
+<body>
+
+<!-- PARTICLES -->
+<div class="particles">
+<script>
+(function(){
+  const script = document.currentScript;
+  const container = script.parentElement;
+  const count = 18;
+  for (let i = 0; i < count; i++) {
+    const s = document.createElement('span');
+    s.style.left = (Math.random() * 90 + 5).toFixed(2) + '%';
+    s.style.animationDuration = (3 + Math.random() * 5).toFixed(2) + 's';
+    container.appendChild(s);
+  }
+})();
+</script>
+</div>
+
+<!-- LOGO -->
+<img src="{% static 'images/taminadulogo.png' %}" class="corner-logo">
+
+<!-- LEFT SIDE IMAGE -->
+<div class="left-banner"></div>
+
+<!-- CENTER CONTENT -->
+<div class="container">
+
+  <div class="welcome-title">
+    <h2>Welcome To</h2>
+    <h1>Courtallam Town Panchayat</h1>
+  </div>
+
+  <div class="role-grid">
+      <div class="role-card" onclick="window.location.href='{% url 'welcome2' %}'">Admin Login</div>
+      <div class="role-card" onclick="window.location.href='{% url 'welcome3' %}'">Supervisor Login</div>
+      <div class="role-card" onclick="window.location.href='{% url 'welcome4' %}'">EO Login</div>
+      <div class="role-card" onclick="window.location.href='{% url 'welcome' %}'">Public Application</div>
+  </div>
+
+</div>
+
+</body>
+</html>

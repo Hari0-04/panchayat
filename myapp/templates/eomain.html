@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EO Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --navy: #0a1a2b;
+      --teal: #007b88;
+      --teal-light: #11a7b5;
+      --gold: #f7d774;
+      --glass: rgba(255, 255, 255, 0.12);
+      --stroke: rgba(255,255,255,0.25);
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, var(--navy), var(--teal));
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 95%;
+      max-width: 900px;
+      padding: 25px;
+      box-sizing: border-box;
+    }
+
+    /* HEADER */
+    .header {
+      background: linear-gradient(135deg, var(--teal-light), var(--teal));
+      padding: 18px 25px;
+      border-radius: 18px;
+      color: white;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      margin-bottom: 25px;
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--stroke);
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 1.9em;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .header div {
+      margin-top: 5px;
+      font-size: 1.1em;
+      font-weight: 500;
+      color: var(--gold);
+    }
+
+    /* BUTTONS */
+    .buttons {
+      margin: 25px 0;
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      flex: 1 1 160px;
+      text-align: center;
+      padding: 15px 20px;
+      border-radius: 14px;
+      background: var(--glass);
+      border: 1px solid var(--stroke);
+      color: white;
+      font-weight: 600;
+      font-size: 1.05em;
+      text-decoration: none;
+      cursor: pointer;
+      transition: 0.3s;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+    }
+
+    .btn:hover {
+      transform: scale(1.04);
+      background: rgba(255,255,255,0.20);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+      border-color: var(--gold);
+    }
+
+    /* PUBLIC USERS LIST */
+    .public-users {
+      display: none;
+      flex-direction: column;
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .user-card {
+      background: var(--glass);
+      padding: 20px;
+      border-radius: 15px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+      border: 1px solid var(--stroke);
+      color: white;
+    }
+
+    .user-card strong {
+      color: var(--gold);
+    }
+
+    /* MOBILE */
+    @media (max-width: 768px) {
+      .btn {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>Executive Officer Dashboard</h1>
+    <div>{{ admin_username }}</div>
+  </div>
+
+  <!-- BUTTONS -->
+  <div class="buttons">
+    <a id="publicSignupBtn" href="{% url 'public_signups' %}" class="btn">📋 Public Signups</a>
+    <a href="{% url 'eo_requests' %}" class="btn">📝 Requests</a>
+    <a href="{% url 'eo_complaints' %}" class="btn">⚠ Complaints</a>
+  </div>
+
+  <!-- PUBLIC USERS LIST -->
+  <div id="publicUsers" class="public-users">
+
+    {% if public_users %}
+      {% for user in public_users %}
+        <div class="user-card">
+          <p><strong>Name:</strong> {{ user.full_name|default:user.username }}</p>
+          <p><strong>Email:</strong> {{ user.email }}</p>
+          <p><strong>Phone:</strong> {{ user.phone|default:"-" }}</p>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="user-card">No public signups available.</div>
+    {% endif %}
+
+  </div>
+
+</div>
+
+<script>
+  const publicBtn = document.getElementById('publicSignupBtn');
+  const publicUsers = document.getElementById('publicUsers');
+
+  if (publicBtn && publicUsers) {
+    publicBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      publicUsers.style.display =
+        publicUsers.style.display === 'flex' ? 'none' : 'flex';
+    });
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Public Requests - Futuristic Dashboard</title>
+<style>
+/* Root colors */
+:root {
+  --bg-gradient: linear-gradient(135deg, #0a0d14, #121722, #1c2433);
+  --card-bg: rgba(255,255,255,0.05);
+  --border-glow: #3e8cff;
+  --text-light: #c7c7c7;
+  --header-glow: linear-gradient(90deg, #3e8cff, #b36bff);
+  --verified: #00ff99;
+  --pending: #ffc107;
+  --complete: #17a2b8;
+  --input-glow: #3e8cff;
+}
+
+/* RESET */
+* { margin:0; padding:0; box-sizing:border-box; font-family: Arial, sans-serif; }
+body {
+  min-height: 100vh;
+  background: var(--bg-gradient);
+  color: var(--text-light);
+  overflow-x: hidden;
+  padding: 20px;
+  position: relative;
+  animation: fadeIn 1s ease-in-out;
+}
+
+/* Fade-in */
+@keyframes fadeIn { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
+
+/* Header */
+.tasks-header {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  background: var(--header-glow);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  border-bottom: 2px solid #b36bff;
+  padding-bottom: 10px;
+}
+
+/* Filter Inputs */
+.filter-container {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 25px;
+}
+.filter-group { display: flex; flex-direction: column; min-width: 200px; }
+.filter-group label { font-weight: bold; color: var(--text-light); margin-bottom: 5px; }
+.filter-group input, .filter-group select {
+  padding: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); 
+  background: rgba(255,255,255,0.05); color:#fff; outline:none; transition:0.3s; font-size:0.95rem;
+}
+.filter-group input:focus { border-color: var(--input-glow); box-shadow: 0 0 8px var(--input-glow); }
+
+/* Task Cards */
+.tasks-container { display: flex; flex-direction: column; gap: 15px; max-width: 900px; margin: 0 auto; }
+.task-card {
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--card-bg); backdrop-filter: blur(12px);
+  border: 1.5px solid var(--border-glow); border-radius: 16px; padding: 15px; gap: 15px;
+  transition: 0.3s; animation: cardFade 0.8s ease forwards; opacity:0;
+}
+@keyframes cardFade { to { opacity:1; transform:translateY(0); } from {opacity:0; transform:translateY(10px);} }
+.task-card:hover { box-shadow: 0 0 15px var(--border-glow); }
+
+/* Profile Image */
+.profile-img { width:60px; height:60px; border-radius:50%; background-color:#b36bff; flex-shrink:0; }
+
+/* Task Details */
+.task-details { flex:1; display:flex; flex-direction:column; gap:4px; }
+.task-details p { margin:0; color: var(--text-light); font-size:0.95rem; }
+
+/* Task Buttons */
+.task-buttons { display:flex; flex-direction:column; gap:5px; }
+.task-buttons button {
+  padding:6px 12px; font-size:0.85rem; border:none; border-radius:8px; font-weight:bold; cursor:pointer; transition:0.3s;
+}
+.verified-btn { background-color: var(--verified); color:#000; }
+.pending-btn { background-color: var(--pending); color:#000; }
+.complete-btn { background-color: var(--complete); color:#000; }
+.task-buttons button:hover { box-shadow: 0 0 12px var(--border-glow); transform:scale(1.05); }
+
+/* Back Button */
+.back-btn { font-size:30px; color:#fff; cursor:pointer; margin-bottom:15px; display:inline-block; }
+.back-btn:hover { color: #3e8cff; }
+
+/* Particles */
+.particle {
+  position:absolute; width:8px; height:8px; background:#3e8cff; border-radius:50%; opacity:0.6;
+  animation: float 8s linear infinite;
+}
+@keyframes float {
+  0% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(-200px) translateX(100px); }
+  100% { transform: translateY(0) translateX(0); }
+}
+
+/* Responsive */
+@media(max-width: 800px){
+  .tasks-container { max-width:100%; }
+  .filter-container { flex-direction:column; align-items:center; }
+  .task-card { flex-direction:column; align-items:flex-start; }
+  .task-buttons { flex-direction:row; gap:10px; margin-top:10px; }
+}
+</style>
+</head>
+<body>
+
+<span class="back-btn" onclick="history.back()">🏚️</span>
+<div class="tasks-header">Public Requests</div>
+
+<!-- Filter Section -->
+<div class="filter-container">
+  <div class="filter-group">
+    <label for="supervisor-filter">Request_type</label>
+    <input list="supervisor-list" id="supervisor-filter" placeholder="Type or select request type">
+    <datalist id="supervisor-list">
+      {% for s in requests %}
+        <option value="{{ s.request_type }}"></option>
+      {% endfor %}
+    </datalist>
+  </div>
+
+  <div class="filter-group">
+    <label for="area-filter">Area Name</label>
+    <input list="area-list" id="area-filter" placeholder="Type or select area">
+    <datalist id="area-list">
+      {% for a in areas %}
+        <option value="{{ a.name }}"></option>
+      {% endfor %}
+    </datalist>
+  </div>
+</div>
+
+<!-- Task Cards -->
+<div class="tasks-container" id="tasks-container">
+  {% for request in requests %}
+  <div class="task-card" data-supervisor="{{ request.request_type }}" data-area="{{ request.area }}">
+    <div class="profile-img"></div>
+    <div class="task-details">
+      <p><strong>Name:</strong> {{ request.name }}</p>
+      <p><strong>Phone:</strong> {{ request.phone_number }}</p>
+      <p><strong>Address:</strong> {{ request.address }}</p>
+      <p><strong>Area:</strong> {{ request.area }}</p>
+      <p><strong>Request:</strong> {{ request.request_type }}</p>
+      <p><strong>Supervisor:</strong> {{ request.supervisor_name }}</p>
+    </div>
+    <div class="task-buttons">
+      <button class="verified-btn">Verified</button>
+      <button class="pending-btn">Pending</button>
+      <button class="complete-btn">Complete</button>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<script>
+// Floating particles
+for(let i=0;i<40;i++){
+  let particle=document.createElement('div');
+  particle.classList.add('particle');
+  particle.style.left=Math.random()*100+'vw';
+  particle.style.top=Math.random()*100+'vh';
+  particle.style.width=particle.style.height=(Math.random()*4+4)+'px';
+  particle.style.animationDuration=(Math.random()*6+4)+'s';
+  document.body.appendChild(particle);
+}
+
+// Filter functionality
+const supervisorInput = document.getElementById('supervisor-filter');
+const areaInput = document.getElementById('area-filter');
+const taskCards = document.querySelectorAll('.task-card');
+
+function filterTasks(){
+  const supervisorVal = supervisorInput.value.toLowerCase();
+  const areaVal = areaInput.value.toLowerCase();
+  taskCards.forEach(card=>{
+    const supervisor = card.getAttribute('data-supervisor').toLowerCase();
+    const area = card.getAttribute('data-area').toLowerCase();
+    const matchSupervisor = supervisor.includes(supervisorVal);
+    const matchArea = area.includes(areaVal);
+    card.style.display = (matchSupervisor && matchArea) ? 'flex' : 'none';
+  });
+}
+
+supervisorInput.addEventListener('input',filterTasks);
+areaInput.addEventListener('input',filterTasks);
+</script>
+
+</body>
+</html>

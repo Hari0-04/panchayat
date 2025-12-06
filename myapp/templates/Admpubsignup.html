@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin - Public Signup</title>
+
+    <style>
+
+        /* ---------------- PREMIUM BACKGROUND ---------------- */
+        body {
+            font-family: "Poppins", sans-serif;
+            margin: 0;
+            padding: 40px;
+            background: linear-gradient(135deg, #4c57ff, #ff5f8d, #ff9df2);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h2 {
+            color: #fff;
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 25px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* ---------------- PREMIUM GLASS CARD ---------------- */
+        .card {
+            width: 70%;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(20px);
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.4);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.20);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ⭐ SHINY DIAGONAL SWEEP EFFECT ⭐ */
+        .card::before {
+            content: "";
+            position: absolute;
+            top: -150%;
+            left: -150%;
+            width: 300%;
+            height: 300%;
+            background: linear-gradient(
+                120deg,
+                transparent 40%,
+                rgba(255, 255, 255, 0.6) 50%,
+                transparent 60%
+            );
+            transform: rotate(25deg);
+            animation: sweep 6s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes sweep {
+            0%   { transform: translateX(-100%) rotate(25deg); }
+            100% { transform: translateX(100%) rotate(25deg); }
+        }
+
+        p { 
+            color: #fff;
+            font-size: 16px;
+            margin: 6px 0;
+        }
+
+        /* ---------------- BUTTONS ---------------- */
+        button {
+            border: none;
+            padding: 10px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            transition: 0.3s;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+        }
+
+        .verified {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .verified:hover {
+            box-shadow: 0 0 12px #4CAF50;
+            transform: translateY(-2px);
+        }
+
+        .not-verified {
+            background-color: #bdbdbd;
+            color: #333;
+        }
+
+        .admitted {
+            background: #007bff;
+            color: white;
+        }
+
+        .admitted:hover {
+            box-shadow: 0 0 12px #007bff;
+            transform: translateY(-2px);
+        }
+
+    </style>
+</head>
+<body>
+
+    <h2>Admin - Public Signup Management</h2>
+
+    {% for user in public_users %}
+    <div class="card">
+        <p><strong>Name:</strong> {{ user.name }}</p>
+        <p><strong>Phone:</strong> {{ user.phone }}</p>
+
+        <p><strong>Status:</strong>
+            {% if user.is_admitted %}
+                ✅ Verified
+            {% elif user.is_verified %}
+                🟩 Verified by Supervisor
+            {% else %}
+                ❌ Not Verified
+            {% endif %}
+        </p>
+
+        {% if user.is_verified and not user.is_admitted %}
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="user_id" value="{{ user.id }}">
+            <button type="submit" name="admit_user" class="verified">Admit</button>
+        </form>
+
+        {% elif user.is_admitted %}
+            <button class="admitted" disabled>Admitted</button>
+
+        {% else %}
+            <button class="not-verified" disabled>Awaiting Verification</button>
+        {% endif %}
+    </div>
+    {% empty %}
+    <p style="color:white;">No users found.</p>
+    {% endfor %}
+
+
+    {% for user in users %}
+    <div class="card">
+        <p>{{ user.username }}</p>
+        <p>Status: {{ user.is_approved|yesno:"Approved,Pending" }}</p>
+
+        {% if not user.is_approved %}
+        <form action="{% url 'approve_user' user.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="verified">Verify</button>
+        </form>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+</body>
+</html>

@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome Page</title>
+  <style>
+:root {
+  --bg-gradient: linear-gradient(135deg, #0a0d14, #121722, #1c2433);
+  --glass-bg: rgba(255,255,255,0.07);
+  --card-border: rgba(255,255,255,0.15);
+  --blur: 14px;
+
+  --neon-blue: #3e8cff;
+  --neon-purple: #b36bff;
+
+  --text-title: #ffffff;
+  --text-secondary: #c7c7c7;
+
+  --shadow-glow: 0 0 18px rgba(62,140,255,0.45);
+  --card-shadow: 0 0 20px rgba(0,0,0,0.35);
+}
+
+body, html {
+  margin: 0; padding: 0;
+  font-family: Arial, sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text-secondary);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Main container */
+.welcome-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 40px;
+  background: var(--glass-bg);
+  border-radius: 20px;
+  border: 2px solid var(--card-border);
+  backdrop-filter: blur(var(--blur));
+  box-shadow: var(--card-shadow);
+  transition: 0.3s ease;
+}
+.welcome-container:hover {
+  transform: translateY(-5px);
+  border-color: var(--neon-blue);
+  box-shadow: 0 0 25px var(--neon-blue);
+}
+
+/* Logo and illustration */
+.logo {
+  width: 150px;
+  height: auto;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 0 10px var(--neon-blue));
+}
+.town-image {
+  width: 250px;
+  height: auto;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+}
+
+/* Text part */
+.welcome-text h2 {
+  margin: 5px 0;
+  font-weight: normal;
+  color: var(--text-secondary);
+}
+.welcome-text h1 {
+  margin: 5px 0;
+  font-size: 28px;
+  font-weight: bold;
+  background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Smooth fade-in animation */
+.welcome-container {
+  opacity: 0;
+  animation: fadeIn 1s forwards;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+</style>
+
+</head>
+<body>
+  <div class="welcome-container">
+    <img src="{% static 'images/taminadulogo.png' %}" alt="Tamil Nadu Logo" class="logo">
+    <img src="{% static 'images/town1.jpg' %}" alt="Town Illustration" class="town-image">
+    <div class="welcome-text">
+      <h2>Welcome To</h2>
+      <h1>Courtallam Town Panchayat</h1>
+      <h2>Admin App</h2>
+    </div>
+  </div>
+
+  <script>
+    // Redirect after 3 seconds
+    setTimeout(() => {
+      window.location.href = "/login2/"; // Change this to your login page
+    }, 3000);
+  </script>
+</body>
+</html>

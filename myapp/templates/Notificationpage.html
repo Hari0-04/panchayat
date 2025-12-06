@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Notifications</title>
+
+  <!-- Google Fonts for Modern Look -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #f4f7fa;
+      --card-bg: #ffffff;
+      --primary: #1d4ed8;
+      --secondary: #3b82f6;
+      --text-dark: #111827;
+      --text-light: #6b7280;
+      --danger: #ef4444;
+      --hover-shadow: rgba(0, 0, 0, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Inter', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      padding: 30px;
+      min-height: 100vh;
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--primary);
+      margin-bottom: 40px;
+      font-weight: 700;
+      font-size: 2.2rem;
+    }
+
+    .notifications-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 25px;
+    }
+
+    .notification-card {
+      background-color: var(--card-bg);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 4px 15px var(--hover-shadow);
+      position: relative;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border-left: 6px solid var(--secondary);
+    }
+
+    .notification-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px var(--hover-shadow);
+    }
+
+    .delete-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: var(--danger);
+      padding: 6px 12px;
+      border-radius: 6px;
+      color: white;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+
+    .delete-btn:hover {
+      background: #dc2626;
+    }
+
+    .title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .message {
+      font-size: 0.95rem;
+      color: var(--text-dark);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .date-time {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-bottom: 15px;
+    }
+
+    .media img, .media video {
+      width: 100%;
+      border-radius: 12px;
+      margin-top: 12px;
+      max-height: 220px;
+      object-fit: cover;
+    }
+
+    .back-btn {
+      position: fixed;
+      top: 25px;
+      left: 25px;
+      font-size: 32px;
+      color: var(--primary);
+      cursor: pointer;
+      z-index: 100;
+      transition: color 0.2s ease;
+    }
+
+    .back-btn:hover {
+      color: var(--secondary);
+    }
+
+    @media (max-width: 640px) {
+      h1 {
+        font-size: 1.8rem;
+        margin-bottom: 30px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<span class="back-btn" onclick="history.back()">&lt;</span>
+
+<h1>📢 Notifications</h1>
+
+<p style="text-align:center; color: green; font-weight: 600;">{{ message }}</p>
+
+<div class="notifications-container">
+
+  {% for post in posts %}
+  <div class="notification-card">
+
+    <a class="delete-btn" href="{% url 'delete_post' post.id %}">Delete</a>
+
+    <div class="title">{{ post.title }}</div>
+    <div class="message">{{ post.message }}</div>
+    <div class="date-time">{{ post.created_at }}</div>
+
+    {% if post.image %}
+    <div class="media">
+        <img src="{{ post.image.url }}">
+    </div>
+    {% endif %}
+
+    {% if post.video %}
+    <div class="media">
+        <video controls>
+            <source src="{{ post.video.url }}" type="video/mp4">
+        </video>
+    </div>
+    {% endif %}
+
+  </div>
+  {% endfor %}
+
+</div>
+
+</body>
+</html>

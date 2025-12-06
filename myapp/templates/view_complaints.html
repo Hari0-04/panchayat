@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complaint List</title>
+  <style>
+    :root {
+      --bg: #e3f9fb;        /* soft aqua lake-blue background */
+      --card-bg: #ffffff;   /* white for main container */
+      --accent: #2b6777;    /* deep lake blue for headings */
+      --text: #1e4b56;      /* dark teal for text */
+      --highlight: #e63946; /* subtle red highlight if needed */
+      --shadow: rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      background-color: var(--bg);
+      font-family: "Poppins", sans-serif;
+      margin: 0;
+      padding: 20px;
+      color: var(--text);
+    }
+
+    .container {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 25px;
+      max-width: 800px;
+      margin: auto;
+      box-shadow: 0 4px 15px var(--shadow);
+    }
+
+    h2 {
+      text-align: center;
+      color: var(--accent);
+      margin-bottom: 20px;
+      letter-spacing: 1px;
+    }
+
+    .complaint {
+      border-bottom: 1px solid #d0e7ea;
+      padding: 12px 0;
+      transition: background-color 0.2s ease;
+    }
+
+    .complaint:hover {
+      background-color: #f2fbfc;
+      border-radius: 10px;
+    }
+
+    .complaint:last-child {
+      border: none;
+    }
+
+    .name {
+      font-weight: bold;
+      color: var(--accent);
+    }
+
+    .message {
+      margin: 6px 0;
+      color: var(--text);
+    }
+
+    .date {
+      font-size: 0.9em;
+      color: #777;
+    }
+
+    p {
+      text-align: center;
+      color: #555;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Complaint List</h2>
+
+    {% for c in complaints %}
+      <div class="complaint">
+        <div class="name">{{ c.name }}</div>
+        <div class="message">{{ c.message }}</div>
+        <div class="date">{{ c.date|date:"d M Y, h:i A" }}</div>
+      </div>
+    {% empty %}
+      <p>No complaints found.</p>
+    {% endfor %}
+
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complaint List</title>
+  <style>
+    :root {
+      --bg: #e3f9fb;
+      --card-bg: #ffffff;
+      --accent: #2b6777;
+      --text: #1e4b56;
+      --highlight: #e63946;
+      --shadow: rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      background-color: var(--bg);
+      font-family: "Poppins", sans-serif;
+      margin: 0;
+      padding: 20px;
+      color: var(--text);
+    }
+
+    .container {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 25px;
+      max-width: 800px;
+      margin: auto;
+      box-shadow: 0 4px 15px var(--shadow);
+    }
+
+    h2 {
+      text-align: center;
+      color: var(--accent);
+      margin-bottom: 20px;
+      letter-spacing: 1px;
+    }
+
+    .complaint {
+      border-bottom: 1px solid #d0e7ea;
+      padding: 12px 0;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      transform-origin: center;
+    }
+
+    .complaint:hover {
+      background-color: #f2fbfc;
+    }
+
+    .complaint.active {
+      transform: scale(1.05);
+      background-color: #dff7fa;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .complaint:last-child {
+      border: none;
+    }
+
+    .name {
+      font-weight: bold;
+      color: var(--accent);
+    }
+
+    .message {
+      margin: 6px 0;
+      color: var(--text);
+    }
+
+    .date {
+      font-size: 0.9em;
+      color: #777;
+    }
+
+    p {
+      text-align: center;
+      color: #555;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Complaint List</h2>
+
+    {% for c in complaints %}
+      <div class="complaint">
+        <div class="name">{{ c.name }}</div>
+        <div class="message">{{ c.message }}</div>
+        <div class="date">{{ c.date|date:"d M Y, h:i A" }}</div>
+      </div>
+    {% empty %}
+      <p>No complaints found.</p>
+    {% endfor %}
+  </div>
+
+  <script>
+    // Toggle expand effect on click
+    document.querySelectorAll('.complaint').forEach(card => {
+      card.addEventListener('click', () => {
+        card.classList.toggle('active');
+      });
+    });
+  </script>
+</body>
+</html>
+
+
+
+

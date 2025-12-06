@@ -1,0 +1,142 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Supervisor Login | Courtallam Town Panchayat</title>
+
+<style>
+:root {
+  --bg-gradient: linear-gradient(135deg, #0a0d14, #121722, #1c2433);
+  --neon-blue: #3e8cff;
+  --neon-purple: #b36bff;
+  --text-white: #ffffff;
+  --text-grey: #c7c7c7;
+}
+
+/* RESET */
+* { margin:0; padding:0; box-sizing:border-box; font-family:"Arial", sans-serif; }
+
+body {
+  height: 100vh;
+  width: 100vw;
+  background: var(--bg-gradient);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--text-white);
+  overflow: hidden;
+  text-align: center;
+  animation: fadeIn 1s ease-in-out;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Container */
+.fullscreen-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  max-width: 600px;
+}
+
+/* Title */
+.fullscreen-container h1 {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.fullscreen-container h2 {
+  font-size: 20px;
+  color: var(--text-grey);
+  margin-bottom: 25px;
+}
+
+/* Description */
+.project-desc {
+  font-size: 16px;
+  color: var(--text-grey);
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+/* Form */
+.fullscreen-container form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.fullscreen-container input {
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  transition: 0.3s;
+}
+.fullscreen-container input:focus {
+  border-color: var(--neon-blue);
+  box-shadow: 0 0 10px var(--neon-blue);
+}
+
+.fullscreen-container button {
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  background: var(--neon-blue);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.fullscreen-container button:hover {
+  background: var(--neon-purple);
+  box-shadow: 0 0 12px var(--neon-purple);
+}
+
+/* Error Message */
+.error-msg {
+  color: #ff4d4d;
+  font-size: 14px;
+}
+</style>
+</head>
+<body>
+
+<div class="fullscreen-container">
+  <h1>Supervisor Login</h1>
+  <h2>Courtallam Town Panchayat</h2>
+
+  <div class="project-desc">
+    This Panchayat Project is a web-based system designed to manage local governance and citizen complaints efficiently. Supervisors can track complaints, monitor progress, and communicate updates in real-time. The system ensures transparency, accountability, and streamlined administration for better service delivery to the town's residents.
+  </div>
+
+  <form method="POST" action="{% url 'supervisor_login' %}">
+    {% csrf_token %}
+    <input type="text" name="supervisor_id" placeholder="Enter Supervisor ID" required>
+    <input type="password" name="password" placeholder="Enter Password" required>
+    <button type="submit">Login</button>
+
+    {% for message in messages %}
+      <p class="error-msg">{{ message }}</p>
+    {% endfor %}
+  </form>
+</div>
+
+</body>
+</html>

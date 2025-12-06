@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glass Toggle Signup</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --glass-bg: rgba(255, 255, 255, 0.35);
+      --glass-border: rgba(255, 255, 255, 0.55);
+      --card-radius: 25px;
+      --input-bg: rgba(255, 255, 255, 0.6);
+      --soft-shadow: rgba(0, 0, 0, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Nunito", sans-serif;
+      background: linear-gradient(135deg, #8585ec, #ff6a6a, #ff71f6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* CONTAINER */
+    .card-wrapper {
+      width: 420px;
+      height: 520px;
+      perspective: 1400px;
+    }
+
+    /* CARD */
+    .card {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.9s ease;
+    }
+
+    .card.flipped {
+      transform: rotateY(180deg);
+    }
+
+    /* BOTH FACES */
+    .face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      padding: 28px;
+      backdrop-filter: blur(22px);
+      background: var(--glass-bg);
+      border-radius: var(--card-radius);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 15px 40px var(--soft-shadow);
+      backface-visibility: hidden;
+    }
+
+    .back {
+      transform: rotateY(180deg);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .header h2 {
+      font-size: 26px;
+      color: #444;
+      font-weight: 800;
+      text-shadow: 0 0 6px rgba(255, 255, 255, 0.7);
+    }
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .form input, textarea {
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(200, 200, 200, 0.4);
+      background: var(--input-bg);
+      color: #333;
+      font-size: 15px;
+      transition: .3s;
+    }
+
+    textarea {
+      resize: vertical;
+      height: 80px;
+    }
+
+    /* BUTTONS */
+    .btn {
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 700;
+      background: linear-gradient(145deg, #ffffffbb, #ededed);
+      color: #333;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+    }
+
+    .toggle {
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    .toggle a {
+      cursor: pointer;
+      color: #555;
+      font-weight: 700;
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+
+{% load static %}
+<img src="{% static 'images/logo.png' %}" 
+     style="position: absolute; top: 20px; right: 20px; width: 220px; opacity: 0.9;">
+
+<div class="card-wrapper">
+  <div class="card" id="toggle-card">
+
+    <!-- SIGNUP FACE -->
+    <div class="face front">
+      <div class="header"><h2>Sign Up</h2></div>
+
+      <form class="form">
+        <input type="text" placeholder="Username">
+        <input type="text" placeholder="Phone Number">
+        <input type="password" placeholder="Password">
+        <input type="password" placeholder="Confirm Password">
+        <textarea placeholder="Address"></textarea>
+
+        <button type="button" class="btn">Register</button>
+      </form>
+
+      <div class="toggle">
+        <a id="flipToLogin">Already have an account?</a>
+      </div>
+    </div>
+
+    <!-- LOGIN FACE -->
+    <div class="face back">
+      <div class="header"><h2>Login</h2></div>
+
+      <form class="form">
+        <input type="text" placeholder="Username">
+        <input type="password" placeholder="Password">
+        <button type="button" class="btn">Login</button>
+      </form>
+
+      <div class="toggle">
+        <a id="flipToSignup">Create new account</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const card = document.getElementById("toggle-card");
+  document.getElementById("flipToLogin").onclick = () => card.classList.add("flipped");
+  document.getElementById("flipToSignup").onclick = () => card.classList.remove("flipped");
+</script>
+
+</body>
+</html>

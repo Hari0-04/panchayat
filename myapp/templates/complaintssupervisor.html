@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Public Complaints</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root {
+  --bg-gradient: linear-gradient(135deg, #0a0d14, #121722, #1c2433);
+  --primary: #3e8cff;       /* Neon Blue */
+  --secondary: #b36bff;     /* Neon Purple */
+  --text-light: #ffffff;     /* White */
+  --text-grey: #c7c7c7;      /* Dim Grey */
+  --card-bg: rgba(255,255,255,0.05);
+  --card-blur: blur(8px);
+  --verified: #00ff99;
+  --unverified: #ff3f3f;
+}
+
+/* Reset */
+* { margin:0; padding:0; box-sizing:border-box; font-family: Arial, sans-serif; }
+body {
+  background: var(--bg-gradient);
+  color: var(--text-light);
+  min-height: 100vh;
+  padding: 20px;
+  animation: fadeIn 1s ease-in-out;
+}
+
+/* Fade-in */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header */
+.tasks-header {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  border-bottom: 2px solid var(--secondary);
+  padding-bottom: 10px;
+}
+
+/* Filter Section */
+.filter-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+.filter-group { display: flex; flex-direction: column; min-width: 200px; }
+.filter-group label { font-size: 0.9rem; color: var(--text-grey); margin-bottom: 5px; font-weight: bold; }
+.filter-group input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--secondary);
+  font-size: 0.9rem;
+  background: rgba(255,255,255,0.05);
+  color: var(--text-light);
+  outline: none;
+  transition: 0.3s;
+}
+.filter-group input:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--primary); }
+
+/* Task Cards */
+.tasks-container { display: flex; flex-direction: column; gap: 15px; max-width: 900px; margin: 0 auto; }
+.task-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--card-bg);
+  backdrop-filter: var(--card-blur);
+  padding: 15px;
+  border-radius: 12px;
+  gap: 15px;
+  transition: 0.3s;
+  border: 1px solid var(--primary);
+}
+.task-card:hover { box-shadow: 0 0 15px var(--secondary); }
+
+.profile-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--secondary);
+  flex-shrink: 0;
+}
+
+.task-details { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.task-details p { margin: 0; font-size: 0.95rem; color: var(--text-light); }
+
+/* Status Button */
+.status-btn {
+  padding: 8px 14px;
+  border: none;
+  color: #000;
+  cursor: pointer;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+.status-btn.verified { background-color: var(--verified); }
+.status-btn.unverified { background-color: var(--unverified); }
+.status-btn:hover { box-shadow: 0 0 10px var(--primary); }
+
+/* Back Button */
+.back-btn {
+  font-size: 30px;
+  color: var(--text-light);
+  padding: 5px 10px;
+  cursor: pointer;
+  margin-bottom: 15px;
+  display: inline-block;
+  transition: 0.3s;
+}
+.back-btn:hover { color: var(--primary); }
+</style>
+</head>
+<body>
+
+<a class="back-btn" onclick="history.back()">🏚️ Back</a>
+<div class="tasks-header">Public Complaints</div>
+
+<div class="filter-container">
+  <div class="filter-group">
+    <label for="supervisor-filter">Complaint Type</label>
+    <input list="supervisor-list" id="supervisor-filter" placeholder="Type a Complaint Type">
+    <datalist id="supervisor-list">
+      {% for s in complaints %}
+        <option value="{{ s.complaint_type }}"></option>
+      {% endfor %}
+    </datalist>
+  </div>
+
+  <div class="filter-group">
+    <label for="area-filter">Area Name</label>
+    <input list="area-list" id="area-filter" placeholder="Type or select area">
+    <datalist id="area-list">
+      {% for a in areas %}
+        <option value="{{ a.name }}"></option>
+      {% endfor %}
+    </datalist>
+  </div>
+</div>
+
+<div class="tasks-container" id="tasks-container">
+  {% for complaint in complaints %}
+  <div class="task-card" data-supervisor="{{ complaint.complaint_type }}" data-area="{{ complaint.location }}">
+    <div class="profile-img"></div>
+    <div class="task-details">
+      <p><strong>Name:</strong> {{ complaint.user }}</p>
+      <p><strong>Phone:</strong> {{ complaint.phone }}</p>
+      <p><strong>Address:</strong> {{ complaint.address }}</p>
+      <p><strong>Area:</strong> {{ complaint.location }}</p>
+      <p><strong>Complaint:</strong> {{ complaint.complaint_type }}</p>
+      <p><strong>Supervisor:</strong> {{ complaint.supervisor_name }}</p>
+    </div>
+    <button 
+      class="status-btn {% if complaint.status == 'verified' %}verified{% else %}unverified{% endif %}" 
+      data-id="{{ complaint.id }}">
+      {% if complaint.status == 'verified' %}Verified{% else %}Unverified{% endif %}
+    </button>
+  </div>
+  {% endfor %}
+</div>
+
+<script>
+  // CSRF helper
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+  const csrftoken = getCookie('csrftoken');
+
+  // Toggle button & save to DB
+  document.querySelectorAll('.status-btn').forEach(button => {
+    button.addEventListener('click', () => {
+      const complaintId = button.dataset.id;
+      const newStatus = button.classList.contains('unverified') ? 'verified' : 'unverified';
+
+      button.classList.toggle('verified', newStatus === 'verified');
+      button.classList.toggle('unverified', newStatus === 'unverified');
+      button.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+
+      fetch(`/toggle-status/${complaintId}/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken
+        },
+        body: JSON.stringify({ status: newStatus })
+      }).then(res => res.json())
+        .then(data => {
+          if (!data.success) {
+            alert('Failed to save status!');
+            const revertStatus = newStatus === 'verified' ? 'unverified' : 'verified';
+            button.classList.toggle('verified', revertStatus === 'verified');
+            button.classList.toggle('unverified', revertStatus === 'unverified');
+            button.textContent = revertStatus.charAt(0).toUpperCase() + revertStatus.slice(1);
+          }
+        })
+        .catch(err => console.error(err));
+    });
+  });
+</script>
+
+</body>
+</html>

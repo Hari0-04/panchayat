@@ -1,0 +1,226 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premium EO Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  /* Background & Surface */
+  --bg-start: #0a0d14;
+  --bg-middle: #121722;
+  --bg-end: #1c2433;
+  --card-bg: rgba(255,255,255,0.07);
+  --card-border: rgba(255,255,255,0.15);
+
+  /* Accents */
+  --neon-blue: #3e8cff;
+  --neon-purple: #b36bff;
+
+  /* Text */
+  --text-main: #ffffff;
+  --text-secondary: #c7c7c7;
+
+  /* Shadows & Glow */
+  --card-shadow: rgba(0,0,0,0.35);
+  --glow-blue: rgba(62,140,255,0.45);
+}
+
+/* Reset */
+* {
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, var(--bg-start), var(--bg-middle), var(--bg-end));
+  color: var(--text-main);
+}
+
+/* Header */
+.header-bar {
+  text-align: center;
+  padding: 18px;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-main);
+  background: rgba(0,0,0,0.2);
+  backdrop-filter: blur(4px);
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Center login */
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  padding: 20px;
+}
+
+/* Glassmorphic Card */
+.login-card {
+  width: 450px;
+  background: var(--card-bg);
+  border-radius: 18px;
+  padding: 30px;
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 0 20px var(--card-shadow);
+  transition: transform 0.3s, box-shadow 0.3s, border 0.3s;
+}
+.login-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 30px var(--glow-blue);
+  border: 1px solid var(--neon-blue);
+}
+
+/* Card Header */
+.login-header {
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 25px;
+  background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Form */
+.login-form {
+  display: flex;
+  flex-direction: column;
+}
+.login-form label {
+  margin-bottom: 5px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.login-form input {
+  padding: 14px;
+  margin-bottom: 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.07);
+  color: var(--text-main);
+  outline: none;
+  font-size: 16px;
+  transition: 0.3s, box-shadow 0.3s;
+}
+.login-form input:focus {
+  border-color: var(--neon-blue);
+  box-shadow: 0 0 12px var(--neon-blue);
+  background: rgba(255,255,255,0.12);
+}
+
+/* Button */
+.signin-btn {
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 16px;
+  background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+  border: none;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.signin-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 15px var(--neon-blue), 0 0 20px var(--neon-purple);
+}
+
+/* Toggle */
+.toggle-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  cursor: pointer;
+}
+.switch {
+  width: 40px;
+  height: 20px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 20px;
+  position: relative;
+  transition: 0.3s;
+}
+.switch::before {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: var(--text-main);
+  border-radius: 50%;
+  top: 1px; left: 1px;
+  transition: 0.3s;
+}
+.switch.active {
+  background: var(--neon-blue);
+}
+.switch.active::before {
+  left: 21px;
+}
+.toggle-label {
+  margin-left: 10px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* Messages */
+.message {
+  text-align: center;
+  color: #ff6b6b;
+  font-size: 0.9rem;
+}
+
+/* Responsive */
+@media(max-width:500px){
+  .login-card{width:95%;}
+  .login-header{font-size:24px;}
+}
+</style>
+</head>
+
+<body>
+<div class="header-bar">EO LOGIN</div>
+
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-header">Executive Access</div>
+
+    <form class="login-form" method="POST" action="{% url 'EOlogin' %}">
+      {% csrf_token %}
+
+      <label>EO ID</label>
+      <input type="text" name="emp_number" placeholder="Enter your ID" required>
+
+      <label>Password</label>
+      <input type="password" name="password" placeholder="Enter password" required>
+
+      <div class="toggle-container" onclick="document.querySelector('.switch').classList.toggle('active')">
+        <div class="switch"></div>
+        <span class="toggle-label">Remember Me</span>
+      </div>
+
+      <button type="submit" class="signin-btn">Login</button>
+    </form>
+
+    {% if messages %}
+      {% for message in messages %}
+        <p class="message">{{ message }}</p>
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>
+</body>
+</html>
