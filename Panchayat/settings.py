@@ -23,7 +23,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Security
 SECRET_KEY = 'django-insecure-zkcpvpj4_4p758(6+(qxr&lrd75(s4&fs(6&hjgy-h&ixozo3x'
 DEBUG = True
-ALLOWED_HOSTS = ['https://panchayat-7w9e.onrender.com']
+ALLOWED_HOSTS = ['panchayat-7w9e.onrender.com']
 
 LOGIN_URL = '/login/'
 
