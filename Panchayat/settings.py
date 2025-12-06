@@ -25,7 +25,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Security
 SECRET_KEY = 'django-insecure-zkcpvpj4_4p758(6+(qxr&lrd75(s4&fs(6&hjgy-h&ixozo3x'
 DEBUG = True
-ALLOWED_HOSTS = ['Panchayat.onrender.com', 'localhost']
+ALLOWED_HOSTS = ['panchayat-2.onrender.com']
+
 
 
 LOGIN_URL = '/login/'
