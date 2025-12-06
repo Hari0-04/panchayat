@@ -390,9 +390,57 @@ def upload_profile(request):
 def Mainpage(request):
     return render(request, "Mainpage.html")
 
+from django.db.models import Count
+from django.db.models.functions import ExtractMonth
+from django.utils import timezone
+
 def Mainpageadmin(request):
     admin_username = request.session.get('admin_username', None)
-    return render(request, "Mainpageadmin.html", {"admin_username": admin_username})
+
+    # Total counts
+    total_complaints = Complaint.objects.count()
+    total_requests = Request.objects.count()
+
+    # Month labels
+    month_labels = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+
+    # Complaints grouped by month
+    complaints_month = (
+        Complaint.objects.annotate(month=ExtractMonth('date_time'))
+        .values('month')
+        .annotate(count=Count('id'))
+        .order_by('month')
+    )
+
+    # Requests grouped by month
+    requests_month = (
+        Request.objects.annotate(month=ExtractMonth('id'))  # If you have created_at field, use that
+        .values('month')
+        .annotate(count=Count('id'))
+        .order_by('month')
+    )
+
+    # Create lists initialized to 0 for 12 months
+    complaints_data = [0] * 12
+    requests_data = [0] * 12
+
+    # Fill complaints
+    for item in complaints_month:
+        complaints_data[item['month'] - 1] = item['count']
+
+    # Fill requests
+    for item in requests_month:
+        requests_data[item['month'] - 1] = item['count']
+
+    return render(request, "Mainpageadmin.html", {
+        "admin_username": admin_username,
+        "total_complaints": total_complaints,
+        "total_requests": total_requests,
+        "months": month_labels,
+        "complaints_data": complaints_data,
+        "requests_data": requests_data,
+    })
+
 
 
 
