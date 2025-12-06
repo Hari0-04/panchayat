@@ -5,8 +5,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panchayat Login</title>
+
 <style>
-/* BODY & BACKGROUND */
+/* BODY */
 body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
@@ -19,13 +20,13 @@ body {
     animation: fadeIn 1s ease-in-out;
 }
 
-/* FADE-IN ANIMATION */
+/* FADE ANIMATION */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* CONTAINER */
+/* MAIN CONTAINER */
 .container {
     width: 85%;
     max-width: 1050px;
@@ -38,8 +39,6 @@ body {
     backdrop-filter: blur(25px);
     box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6);
     color: #fff;
-    position: relative;
-    overflow: hidden;
 }
 
 /* LEFT INFO */
@@ -71,9 +70,6 @@ body {
     border-radius: 20px;
     backdrop-filter: blur(25px);
     box-shadow: 0 0 20px #3e8cff;
-    color: #fff;
-    position: relative;
-    animation: fadeIn 1s ease forwards;
 }
 .login-box h2 {
     font-size: 30px;
@@ -82,7 +78,10 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
+/* INPUTS */
 .input-group { margin-bottom: 20px; }
+
 input {
     width: 100%;
     padding: 14px;
@@ -118,14 +117,26 @@ button:hover {
     transform: translateY(-2px);
 }
 
-/* ERROR MESSAGE */
-.error-msg {
-    color: #ffcc00;
-    margin-bottom: 15px;
-    font-weight: bold;
+/* FORGOT + SIGNUP LINKS */
+.login-links {
+    margin-top: 18px;
+    text-align: center;
 }
 
-/* FLOATING PARTICLES */
+.login-links a {
+    color: #3e8cff;
+    font-size: 16px;
+    text-decoration: none;
+    font-weight: 600;
+    display: block;
+    margin-top: 8px;
+    transition: 0.3s;
+}
+.login-links a:hover {
+    opacity: 0.8;
+}
+
+/* PARTICLES */
 .particle {
     position: absolute;
     width: 8px;
@@ -135,6 +146,7 @@ button:hover {
     opacity: 0.6;
     animation: float 8s linear infinite;
 }
+
 @keyframes float {
     0% { transform: translateY(0) translateX(0); }
     50% { transform: translateY(-200px) translateX(100px); }
@@ -143,21 +155,25 @@ button:hover {
 
 /* RESPONSIVE */
 @media (max-width: 900px) {
-    .container { grid-template-columns: 1fr; padding: 30px; text-align: center; }
-    .info h1 { font-size: 32px; }
+    .container { 
+        grid-template-columns: 1fr; 
+        padding: 30px;
+        text-align: center; 
+    }
 }
 </style>
 </head>
+
 <body>
 
 <div class="container">
+
     <!-- LEFT INFO -->
     <div class="info">
         <img src="{% static 'img/logo.png' %}" class="logo">
         <h1>Panchayat Smart Portal</h1>
         <p>
-            A clean and modern platform for managing citizen requests, 
-            complaints, and local services with high transparency and speed.
+            A modern platform for managing citizen requests, complaints, and services.
         </p>
     </div>
 
@@ -171,27 +187,37 @@ button:hover {
 
         <form method="POST" action="{% url 'loginpage' %}">
             {% csrf_token %}
+            
             <div class="input-group">
                 <input type="text" name="phoneno" placeholder="Phone Number" required>
             </div>
+
             <div class="input-group">
                 <input type="password" name="password" placeholder="Password" required>
             </div>
+
             <button type="submit">Login</button>
         </form>
+
+        <!-- FORGOT + SIGNUP -->
+        <div class="login-links">
+            <a href="{% url 'Forgotpassword' %}">Forgot Password?</a>
+            <a href="{% url 'signup' %}">New here? Create an account</a>
+        </div>
     </div>
+
 </div>
 
-<!-- Floating particles script -->
+<!-- PARTICLES -->
 <script>
 for(let i=0;i<40;i++){
-    let particle = document.createElement('div');
-    particle.classList.add('particle');
-    particle.style.left = Math.random()*100+'vw';
-    particle.style.top = Math.random()*100+'vh';
-    particle.style.width = particle.style.height = (Math.random()*4+4)+'px';
-    particle.style.animationDuration = (Math.random()*6+4)+'s';
-    document.body.appendChild(particle);
+    let p = document.createElement('div');
+    p.classList.add('particle');
+    p.style.left = Math.random()*100+'vw';
+    p.style.top = Math.random()*100+'vh';
+    p.style.width = p.style.height = (Math.random()*4+4)+'px';
+    p.style.animationDuration = (Math.random()*6+4)+'s';
+    document.body.appendChild(p);
 }
 </script>
 
