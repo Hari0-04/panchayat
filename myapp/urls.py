@@ -60,8 +60,9 @@ urlpatterns = [
     path('notifications/', views.notification_page, name='notification_page'),
     path("notifications/delete/<int:post_id>/", views.delete_post, name="delete_post"),
     path("forgotpassword/", views.Forgotpassword, name="Forgotpassword"),
+    path("delete_user/<str:role>/<str:user_id>/", views.delete_user, name="delete_user"),
 
-
+  
 
 
 

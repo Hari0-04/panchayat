@@ -390,57 +390,9 @@ def upload_profile(request):
 def Mainpage(request):
     return render(request, "Mainpage.html")
 
-from django.db.models import Count
-from django.db.models.functions import ExtractMonth
-from django.utils import timezone
-
 def Mainpageadmin(request):
     admin_username = request.session.get('admin_username', None)
-
-    # Total counts
-    total_complaints = Complaint.objects.count()
-    total_requests = Request.objects.count()
-
-    # Month labels
-    month_labels = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
-
-    # Complaints grouped by month
-    complaints_month = (
-        Complaint.objects.annotate(month=ExtractMonth('date_time'))
-        .values('month')
-        .annotate(count=Count('id'))
-        .order_by('month')
-    )
-
-    # Requests grouped by month
-    requests_month = (
-        Request.objects.annotate(month=ExtractMonth('id'))  # If you have created_at field, use that
-        .values('month')
-        .annotate(count=Count('id'))
-        .order_by('month')
-    )
-
-    # Create lists initialized to 0 for 12 months
-    complaints_data = [0] * 12
-    requests_data = [0] * 12
-
-    # Fill complaints
-    for item in complaints_month:
-        complaints_data[item['month'] - 1] = item['count']
-
-    # Fill requests
-    for item in requests_month:
-        requests_data[item['month'] - 1] = item['count']
-
-    return render(request, "Mainpageadmin.html", {
-        "admin_username": admin_username,
-        "total_complaints": total_complaints,
-        "total_requests": total_requests,
-        "months": month_labels,
-        "complaints_data": complaints_data,
-        "requests_data": requests_data,
-    })
-
+    return render(request, "Mainpageadmin.html", {"admin_username": admin_username})
 
 
 
@@ -660,3 +612,61 @@ def Posts(request):
         posts=Post.objects.all().order_by('-created_at')
         return redirect('Posts')  # redirect to post list after submission
     return render(request, "posts.html", {"posts": posts})
+
+
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import Supervisor, EOLogin
+
+
+# ----------------------
+# MAIN ADMIN PAGE
+# ----------------------
+def Mainpageadmin(request):
+    supervisors = Supervisor.objects.all()
+    eos = EOLogin.objects.all()
+
+    return render(request, "mainpageadmin.html", {
+        "supervisors": supervisors,
+        "eos": eos,
+        "admin_username": request.session.get("admin_username"),
+    })
+
+
+# ----------------------
+# DELETE USER (Supervisor / EO)
+# ----------------------
+
+import logging
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import Supervisor, EOLogin
+
+logger = logging.getLogger(__name__)
+
+@csrf_exempt
+def delete_user(request, role, user_id):
+    logger.warning("DELETE endpoint hit - role=%s user_id=%s method=%s", role, user_id, request.method)
+    if request.method != "POST":
+        return JsonResponse({"status": "invalid_method"}, status=405)
+
+    try:
+        user_id = user_id.strip()
+        if role == "supervisor":
+            deleted, _ = Supervisor.objects.filter(supervisor_id=user_id).delete()
+        elif role == "eo":
+            deleted, _ = EOLogin.objects.filter(emp_id=user_id).delete()
+        else:
+            return JsonResponse({"status": "error", "message": "Invalid role"}, status=400)
+
+        logger.warning("delete() returned deleted=%s for role=%s id=%s", deleted, role, user_id)
+
+        if deleted == 0:
+            return JsonResponse({"status": "error", "message": "User not found"}, status=404)
+
+        return JsonResponse({"status": "success"})
+
+    except Exception as e:
+        logger.exception("Exception while deleting user")
+        return JsonResponse({"status": "error", "message": str(e)}, status=400)

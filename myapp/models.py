@@ -129,8 +129,6 @@ class EOUser(models.Model):
 
 # -------------------- EO LOGIN --------------------
 from django.db import models
-from django.contrib.auth.hashers import make_password, check_password
-
 class EOLogin(models.Model):
     emp_id = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=100)
@@ -139,7 +137,7 @@ class EOLogin(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.emp_number
+        return self.emp_id
 
     # def set_password(self, raw_password):
     #     self.password = make_password(raw_password)
@@ -151,7 +149,6 @@ class EOLogin(models.Model):
 
 # -------------------- SUPERVISOR MODEL --------------------
 from django.db import models
-from django.contrib.auth.hashers import make_password, check_password
 
 class Supervisor(models.Model):
     supervisor_id = models.CharField(max_length=30, unique=True)
