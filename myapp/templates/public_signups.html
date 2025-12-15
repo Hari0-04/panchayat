@@ -1,103 +1,131 @@
-<!-- public_signups.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Public Signups</title>
-  <style>
-    :root {
-      --bg: #e3f9fb;        /* soft aqua lake-blue background */
-      --card-bg: #ffffff;   /* white for cards */
-      --accent: #2b6777;    /* deep teal-blue */
-      --text: #1e4b56;      /* dark lake text */
-      --highlight: #2a86a0; /* medium blue for card titles */
-      --shadow: rgba(0, 0, 0, 0.1);
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Public Signups</title>
 
-    body {
-      font-family: "Poppins", sans-serif;
-      background: var(--bg);
-      margin: 0;
-      padding: 20px;
-      color: var(--text);
-    }
+<style>
+/* ------------------- THEME VARIABLES ------------------- */
+:root {
+  --bg1: #0a0d14;
+  --bg2: #121722;
+  --bg3: #1c2433;
 
-    h1 {
-      text-align: center;
-      color: var(--accent);
-      margin-bottom: 20px;
-      letter-spacing: 1px;
-    }
+  --glass: rgba(255, 255, 255, 0.07);
+  --glass-border: rgba(255, 255, 255, 0.15);
 
-    .cards-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 20px;
-      margin-top: 20px;
-    }
+  --neon-blue: #3e8cff;
+  --neon-purple: #b36bff;
 
-    .card {
-      background: var(--card-bg);
-      border-radius: 12px;
-      padding: 15px;
-      box-shadow: 0 4px 10px var(--shadow);
-      transition: all 0.3s ease;
-      cursor: pointer;
-      border-left: 6px solid var(--accent);
-      transform-origin: center;
-    }
+  --text-primary: #ffffff;
+  --text-secondary: #c7c7c7;
 
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-    }
+  --shadow: rgba(0, 0, 0, 0.35);
+  --glow: rgba(62, 140, 255, 0.45);
+}
 
-    /* Expanded (clicked) card style */
-    .card.active {
-      transform: scale(1.05);
-      background-color: #dff7fa;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
-    }
+/* ------------------- GLOBAL ------------------- */
+body {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 25px;
+  background: linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg3));
+  color: var(--text-secondary);
+}
 
-    .card h3 {
-      margin: 0 0 10px;
-      color: var(--highlight);
-    }
+/* Neon Gradient Heading */
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2rem;
+  background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 1px;
+}
 
-    .card p {
-      margin: 5px 0;
-      font-size: 0.95em;
-      color: var(--text);
-    }
+/* Grid Layout */
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 22px;
+}
 
-    p[style*="text-align:center"] {
-      color: #555;
-      font-style: italic;
-    }
-  </style>
+/* ------------------- CARD ------------------- */
+.card {
+  background: var(--glass);
+  border-radius: 18px;
+  padding: 18px 22px;
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+
+  box-shadow: 0 0 20px var(--shadow);
+  transition: all 0.35s ease;
+  cursor: pointer;
+}
+
+/* Hover Effects */
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 0 18px var(--glow);
+  border-color: var(--neon-blue);
+}
+
+/* Click Expand */
+.card.active {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px var(--neon-purple);
+  border-color: var(--neon-purple);
+}
+
+/* Text */
+.card h3 {
+  margin: 0 0 12px;
+  color: var(--neon-blue);
+  font-size: 1.2rem;
+}
+
+.card p {
+  margin: 6px 0;
+  font-size: 0.95em;
+}
+
+/* Empty Message */
+.no-users {
+  text-align: center;
+  font-style: italic;
+  color: #aaa;
+  grid-column: 1 / -1;
+}
+</style>
 </head>
-<body>
-  <h1>Public Signups</h1>
-  <div class="cards-container">
-    {% for user in public_users %}
-    <div class="card">
-      <h3>{{ user.name }}</h3>
-      <p><strong>Username:</strong> {{ user.username }}</p>
-      <p><strong>Phone:</strong> {{ user.phoneno }}</p>
-      <p><strong>Address:</strong> {{ user.address }}</p>
-    </div>
-    {% empty %}
-      <p style="text-align:center;">No public users found.</p>
-    {% endfor %}
-  </div>
 
-  <script>
-    // Toggle expand animation on click
-    document.querySelectorAll('.card').forEach(card => {
-      card.addEventListener('click', () => {
-        card.classList.toggle('active');
-      });
+<body>
+
+<h1>Public Signups</h1>
+
+<div class="cards-container">
+  {% for user in public_users %}
+  <div class="card">
+    <h3>{{ user.name }}</h3>
+    <p><strong>Username:</strong> {{ user.username }}</p>
+    <p><strong>Phone:</strong> {{ user.phoneno }}</p>
+    <p><strong>Address:</strong> {{ user.address }}</p>
+  </div>
+  {% empty %}
+    <p class="no-users">No public users found.</p>
+  {% endfor %}
+</div>
+
+<script>
+  // Card click expand
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('click', () => {
+      card.classList.toggle('active');
     });
-  </script>
+  });
+</script>
+
 </body>
 </html>

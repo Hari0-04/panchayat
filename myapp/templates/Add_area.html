@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Area Management</title>
+  <style>
+    :root {
+      --bg1: #0a0d14;
+      --bg2: #121722;
+      --neon-blue: #3e8cff;
+      --neon-purple: #b36bff;
+      --glass: rgba(255,255,255,0.07);
+      --glass-border: rgba(255,255,255,0.15);
+      --title: #ffffff;
+      --muted: #c7c7c7;
+      --radius-lg: 18px;
+      --glow: 0 0 18px rgba(62,140,255,0.45);
+      --card-shadow: 0 0 20px rgba(0,0,0,0.35);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      color: var(--title);
+      font-family: 'Nunito', Arial, sans-serif;
+      min-height: 100vh;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      color: var(--neon-blue);
+      text-shadow: var(--glow);
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+
+    .add-area-btn {
+      display: inline-block;
+      padding: 15px 30px;
+      background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+      color: white;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-bottom: 30px;
+      transition: transform 0.3s;
+      box-shadow: var(--glow);
+    }
+
+    .add-area-btn:hover {
+      transform: translateY(-3px);
+    }
+
+    .areas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .area-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 25px;
+      backdrop-filter: blur(8px);
+      box-shadow: var(--card-shadow);
+      transition: transform 0.3s;
+      position: relative;
+    }
+
+    .area-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--glow);
+    }
+
+    .area-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 15px;
+    }
+
+    .area-card h3 {
+      color: var(--neon-blue);
+      margin: 0;
+      font-size: 1.4rem;
+    }
+
+    .delete-btn {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .delete-btn:hover {
+      background: #dc2626;
+    }
+
+    .area-info {
+      margin: 15px 0;
+    }
+
+    .area-info p {
+      margin: 8px 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .area-info strong {
+      color: var(--title);
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--neon-purple);
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+
+    .popup {
+      background: rgba(28, 36, 51, 0.98);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    .popup h2 {
+      color: var(--neon-blue);
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      color: var(--title);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--glass-border);
+      background: var(--glass);
+      color: var(--title);
+      font-family: inherit;
+      font-size: 1rem;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 25px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: 10px;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      font-family: inherit;
+      transition: transform 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+      color: white;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.1);
+      color: var(--muted);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+
+    .empty-state h2 {
+      color: var(--title);
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>📍 Area Management</h1>
+      <p>Manage areas and assign supervisors</p>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 30px;">
+      <button class="add-area-btn" onclick="openAddAreaPopup()">+ Add New Area</button>
+    </div>
+
+    {% if area_stats %}
+    <div class="areas-grid">
+      {% for item in area_stats %}
+      <div class="area-card">
+        <div class="area-header">
+          <h3>{{ item.area.name }}</h3>
+          <button class="delete-btn" onclick="deleteArea({{ item.area.id }}, '{{ item.area.name }}')">Delete</button>
+        </div>
+
+        <div class="area-info">
+          {% if item.area.pincode %}
+          <p><strong>Pincode:</strong> {{ item.area.pincode }}</p>
+          {% endif %}
+          {% if item.area.district %}
+          <p><strong>District:</strong> {{ item.area.district }}</p>
+          {% endif %}
+          {% if item.area.description %}
+          <p><strong>Description:</strong> {{ item.area.description }}</p>
+          {% endif %}
+        </div>
+
+        <div class="stats-row">
+          <div class="stat">
+            <div class="stat-value">{{ item.supervisor_count }}</div>
+            <div class="stat-label">Supervisors</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">{{ item.complaints_count }}</div>
+            <div class="stat-label">Complaints</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">{{ item.requests_count }}</div>
+            <div class="stat-label">Requests</div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <h2>No Areas Yet</h2>
+      <p>Click "Add New Area" to create your first area</p>
+    </div>
+    {% endif %}
+
+  </div>
+
+  <!-- ADD AREA POPUP -->
+  <div class="popup-overlay" id="addAreaPopup">
+    <div class="popup">
+      <h2>Add New Area</h2>
+      <form method="POST" action="{% url 'add_area' %}">
+        {% csrf_token %}
+        
+        <div class="form-group">
+          <label>Area Name *</label>
+          <input type="text" name="name" placeholder="e.g., Anna Nagar" required>
+        </div>
+
+        <div class="form-group">
+          <label>Pincode</label>
+          <input type="text" name="pincode" placeholder="e.g., 600040" maxlength="10">
+        </div>
+
+        <div class="form-group">
+          <label>District</label>
+          <input type="text" name="district" placeholder="e.g., Chennai">
+        </div>
+
+        <div class="form-group">
+          <label>Description</label>
+          <textarea name="description" placeholder="Brief description of the area"></textarea>
+        </div>
+
+        <div class="form-buttons">
+          <button type="button" class="btn btn-secondary" onclick="closeAddAreaPopup()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add Area</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+
+    function openAddAreaPopup() {
+      document.getElementById('addAreaPopup').style.display = 'flex';
+    }
+
+    function closeAddAreaPopup() {
+      document.getElementById('addAreaPopup').style.display = 'none';
+    }
+
+    function deleteArea(areaId, areaName) {
+      if (confirm(`Are you sure you want to delete "${areaName}"?\n\nWarning: This will affect all associated complaints, requests, and supervisors.`)) {
+        const csrftoken = getCookie('csrftoken');
+        
+        fetch(`/admin/delete-area/${areaId}/`, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': csrftoken
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            alert(data.message);
+            location.reload();
+          } else {
+            alert('Error: ' + data.message);
+          }
+        })
+        .catch(error => {
+          alert('Error deleting area');
+          console.error(error);
+        });
+      }
+    }
+
+    // Close popup on outside click
+    document.getElementById('addAreaPopup').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeAddAreaPopup();
+      }
+    });
+  </script>
+
+</body>
+</html>

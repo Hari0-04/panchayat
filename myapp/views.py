@@ -81,7 +81,7 @@ def loginpage(request):
         password = request.POST.get("password")
 
         user = Signup.objects.filter(phoneno=phoneno, password=password).first()
-
+        request.session['phoneno'] = phoneno  # Save phone number in session
         if user:
             # Save login only if authentication is successful
             new_det=Login(phoneno=phoneno, password=password)
@@ -118,22 +118,29 @@ def loginpage2(request):
             return render(request, "loginpageadmin.html")
     return render(request, "loginpageadmin.html")
 
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import Supervisor
+
+
 def loginpage3(request):
     if request.method == "POST":
         supervisor_id = request.POST.get("supervisor_id")
         password = request.POST.get("password")
 
-        # Filter by correct field names
         user = Supervisor.objects.filter(supervisor_id=supervisor_id, password=password).first()
 
         if user:
-            request.session['supervisor_id'] = user.supervisor_id
-            messages.success(request, "✅ Login Successful!")
-            return redirect("Mainsupervisor")  # or your supervisor main page
-        else:
-            messages.error(request, "❌ Invalid ID or password.")
-            return render(request, "loginsupervisor.html")
-    return render(request, "loginsupervisor.html")
+            # STORE INTEGER ID
+            request.session["supervisor_id"] = user.id
+            messages.success(request, "Login Successful!")
+            return redirect("supervisor_tasks")
+
+        messages.error(request, "Invalid ID or password")
+        return render(request, "loginsupervisor.html")
+
+    return render(request, "Mainsupervisor.html")
+
 
 def loginpage4(request):
     if request.method == "POST":
@@ -166,52 +173,16 @@ def logout4(request):
     return render(request, "loginpageeo.html")
 # request and complaint
 
-def complaint_form(request): 
-    supervisors = Supervisor.objects.all()  # fetch supervisors for both GET and POST
+from django.shortcuts import render, get_object_or_404
+from .models import Complaint, Supervisor
 
-    if request.method == "POST":
-        # Get form data
-        complaintType = request.POST.getlist("complaintType")  # for multiple checkboxes
-        otherType = request.POST.get("otherType")
-        description = request.POST.get("description")
-        file = request.FILES.get("file")
-        date_time = request.POST.get("datetime")  
-        username = request.POST.get("username") 
-        phone = request.POST.get("phone") 
-        address = request.POST.get("address")  
-        location = request.POST.get("location") 
-        supname = request.POST.get("supervisor") 
+# View to add area
+# models.py
+class Area(models.Model):
+    name = models.CharField(max_length=100, unique=True)
 
-        # Handle 'Others'
-        if "Others" in complaintType:
-            complaint_type_value = otherType
-        else:
-            complaint_type_value = ", ".join(complaintType)
-        
-        # Save to database
-        new_det = Complaint(
-            complaint_type=complaint_type_value,
-            description=description,
-            file=file,
-            date_time=date_time,
-            user=username,
-            phone=phone,
-            address=address,
-            location=location,
-            supervisor=supname
-        )
-        new_det.save()
-
-        # Return with supervisors again so dropdown remains populated
-        return render(request, "complaint_form.html", {
-            "supervisors": supervisors,
-            "success": True
-        })
-
-    # ✅ GET request - must pass supervisors here too!
-    return render(request, "complaint_form.html", {
-        "supervisors": supervisors
-    })
+    def __str__(self):
+        return self.name
 
 
 
@@ -259,36 +230,108 @@ def verify_otp(request):
 
         return HttpResponse("Password updated successfully")
 
+# complaint form view
+def complaint_form(request):
+    if request.method == "POST":
 
-# request 
+        user = request.POST.get("user")
+        phone = request.POST.get("phone")
+        address = request.POST.get("address")
+        area_name = request.POST.get("area_name")
+        location = request.POST.get("location")
+        description = request.POST.get("description")
+        other_type = request.POST.get("otherType")
+        file = request.FILES.get("file")
+
+        complaint_types = request.POST.getlist("complaintType")
+
+        # Validation
+        if not complaint_types:
+            messages.error(request, "Please select at least one complaint type.")
+            return redirect("mainpage")
+
+        # Handle Others
+        if "Others" in complaint_types:
+            complaint_types.remove("Others")
+            if other_type:
+                complaint_types.append(other_type)
+
+        complaint_type_final = ", ".join(complaint_types)
+
+        # Get supervisor using Area ForeignKey
+        supervisor = Supervisor.objects.filter(
+            area__name=area_name
+        ).first()
+
+        supervisor_name = supervisor.supervisor_name if supervisor else None
+
+        Complaint.objects.create(
+            user=user,
+            phone=phone,
+            address=address,
+            area_name=area_name,
+            location=location,
+            complaint_type=complaint_type_final,
+            description=description,
+            file=file,
+            date_time=timezone.now(),
+            supervisor=supervisor,
+            supervisor_name=supervisor_name
+        )
+
+        messages.success(request, "✅ Complaint submitted successfully!")
+        return redirect("mainpage")
+
+    return redirect("mainpage")
+
 
 def requestform(request):
     if request.method == "POST":
+
         name = request.POST.get("name")
         phone_number = request.POST.get("phone")
         address = request.POST.get("address")
-        request_type = request.POST.get("requestType")
+        area_name = request.POST.get("area_name")
         other_type = request.POST.get("otherType")
 
-        if "Others" in request_type:
-            request_type_value = other_type
-        else:
-            request_type_value = ", ".join(request_type)
-        # Save to database
-        new_det=request(
+        request_types = request.POST.getlist("requestType")
+
+        # Validation
+        if not request_types:
+            messages.error(request, "Please select at least one request type.")
+            return redirect("mainpage")
+
+        # Handle Others
+        if "Others" in request_types:
+            request_types.remove("Others")
+            if other_type:
+                request_types.append(other_type)
+
+        request_type_final = ", ".join(request_types)
+
+        # Get supervisor using Area FK
+        supervisor = Supervisor.objects.filter(
+            area__name=area_name
+        ).first()
+
+        Request.objects.create(
             name=name,
             phone_number=phone_number,
             address=address,
-            request_type=request_type_value,
-            other_type=other_type
+            area_name=area_name,
+            request_type=request_type_final,
+            other_type=other_type,
+            supervisor=supervisor
         )
-        new_det.save()
 
-    return render(request, "request_form.html")
+        messages.success(request, "✅ Request submitted successfully!")
+        return redirect("mainpage")
+
+    return redirect("mainpage")
 
 
 # =========================
-# MODELS FOR POSTS, ACHIEVEMENTS, TASKS
+# MODELS FOR POSTS, ACHIEVEMENTS, TASKShtl
 
 def Posts(request):
     if request.method == "POST":
@@ -309,10 +352,18 @@ def Posts(request):
         return redirect('Posts')  # redirect to post list after submission
     return render(request, "posts.html")
 
+from django.shortcuts import render
+from .models import Supervisor, Area
+
 def Tasks(request):
-    supervisors=Supervisor.objects.all()
-    areas=Area.objects.all()
-    return render(request, "task.html",{"supervisors": supervisors,"areas": areas})    
+    supervisors = Supervisor.objects.all()
+    areas = Area.objects.all()
+
+    return render(request, "task.html", {
+        "supervisors": supervisors,
+        "areas": areas
+    })
+  
 import random
 import string
 from django.shortcuts import render, redirect
@@ -361,21 +412,23 @@ def Add_supervisor(request):
     # For GET (initial load)
     return render(request, "Addsupervisor.html")
 
-
-
-
+# View to add area
 def Add_area(request):
     if request.method == "POST":
         name = request.POST.get('name')
+
         if Area.objects.filter(name=name).exists():
             messages.error(request, "❌ Area already exists!")
         else:
-            new_det = Area(name=name)
-            new_det.save()
+            Area.objects.create(name=name)
             messages.success(request, "✅ Area added successfully!")
-        # ✅ Use redirect so the message displays properly and doesn't repeat on refresh
-        return redirect('Mainpageadmin')  
+
+        return redirect('Mainpageadmin')
+
     return render(request, "Add_area.html")
+
+
+
 @login_required
 def upload_profile(request):
     if request.method == "POST" and request.FILES.get("profile_image"): # logged-in user
@@ -387,14 +440,108 @@ def upload_profile(request):
         messages.error(request, "❌ No file selected or invalid request!")
     return redirect("Mainpage")
 
-def Mainpage(request):
-    return render(request, "Mainpage.html")
+from .models import Request, Complaint
+
+from .models import Area, Complaint, Request
+
+def mainpage(request):
+    phoneno = request.session.get("phoneno", None)
+    print("SESSION PHONE:", phoneno)
+
+    # Fetch areas for dropdown
+    areas = Area.objects.all()
+
+    # Tracking counts (safe when session is empty)
+    total_complaints = Complaint.objects.filter(phone=phoneno).count() if phoneno else 0
+    total_requests = Request.objects.filter(phone_number=phoneno).count() if phoneno else 0
+
+    return render(request, "Mainpage.html", {
+        "areas": areas,
+        "total_complaints": total_complaints,
+        "total_requests": total_requests,
+    })
+
+ 
+
 
 def Mainpageadmin(request):
-    admin_username = request.session.get('admin_username', None)
-    return render(request, "Mainpageadmin.html", {"admin_username": admin_username})
+    admin_username = request.session.get('admin_username')
+    print("admins: ",admin_username)
 
+    # Count all complaints from all users
+    total_complaints = Complaint.objects.count()
 
+    # Count all requests from all users
+    total_requests = Request.objects.count()
+    supervisors = Supervisor.objects.all()
+    eos= EOLogin.objects.all()
+    print("totals: ",total_complaints, total_requests)
+
+    return render(request, "Mainpageadmin.html", {
+        "admin_username": admin_username,
+        "total_complaints": total_complaints,
+        "total_requests": total_requests,
+        "supervisors": supervisors,
+        "eos": eos
+        })
+
+from django.shortcuts import render
+from django.db.models import Count
+from .models import Complaint, Request, Supervisor, Area
+from django.utils import timezone
+def Tasks(request):
+    # complaint status counts
+    complaint_stats = Complaint.objects.values('status').annotate(count=Count('status'))
+    complaint_stats = {
+        'submitted': 0,
+        'verified': 0,
+        'pending': 0,
+        'completed': 0,
+        **{c['status']: c['count'] for c in complaint_stats}
+    }
+
+    # request status counts
+    request_stats = Request.objects.values('status').annotate(count=Count('status'))
+    request_stats = {
+        'submitted': 0,
+        'verified': 0,
+        'pending': 0,
+        'completed': 0,
+        **{r['status']: r['count'] for r in request_stats}
+    }
+
+    complaints = Complaint.objects.all()
+    requests = Request.objects.all()
+    supervisors = Supervisor.objects.all()
+    areas = Area.objects.all()
+
+    return render(request, "tasks.html", {
+        "complaints": complaints,
+        "requests": requests,
+        "supervisors": supervisors,
+        "areas": areas,
+        "complaint_stats": complaint_stats,
+        "request_stats": request_stats,   # ← REQUIRED
+    })
+
+# views.py
+from django.shortcuts import render
+from django.db.models import Count
+from .models import Complaint, Request
+
+def analytics_dashboard(request):
+    # Complaints by type
+    complaints = Complaint.objects.values('complaint_type').annotate(count=Count('complaint_type'))
+    complaint_data = {c['complaint_type']: c['count'] for c in complaints}
+
+    # Requests by type
+    requests = Request.objects.values('request_type').annotate(count=Count('request_type'))
+    request_data = {r['request_type']: r['count'] for r in requests}
+
+    return render(request, 'Mainpageadmin.html', {
+        'complaint_data': complaint_data,
+        'request_data': request_data,
+    })
 
 def view_complaints(request):
     complaints = Complaint.objects.all().order_by('-id')  # latest first
@@ -623,15 +770,15 @@ from .models import Supervisor, EOLogin
 # ----------------------
 # MAIN ADMIN PAGE
 # ----------------------
-def Mainpageadmin(request):
-    supervisors = Supervisor.objects.all()
-    eos = EOLogin.objects.all()
+# def Mainpageadmin(request):
+#     supervisors = Supervisor.objects.all()
+#     eos = EOLogin.objects.all()
 
-    return render(request, "mainpageadmin.html", {
-        "supervisors": supervisors,
-        "eos": eos,
-        "admin_username": request.session.get("admin_username"),
-    })
+#     return render(request, "mainpageadmin.html", {
+#         "supervisors": supervisors,
+#         "eos": eos,
+#         "admin_username": request.session.get("admin_username"),
+#     })
 
 
 # ----------------------
@@ -670,3 +817,92 @@ def delete_user(request, role, user_id):
     except Exception as e:
         logger.exception("Exception while deleting user")
         return JsonResponse({"status": "error", "message": str(e)}, status=400)
+
+
+from .models import Signup
+# Do not perform database queries at import time; query inside views instead
+# PublicSignup.objects.all()
+def signup_list(request):
+    public_users = Signup.objects.all()
+    return render(request, "eomain.html", {"public_users": public_users})
+
+
+
+from django.shortcuts import render
+from .models import Complaint, Request
+from django.db.models import Count
+
+def dashboard_stats(request):
+
+    # Total Counts
+    total_complaints = Complaint.objects.count()
+    total_requests = Request.objects.count()
+
+    # Latest Table Entries
+    complaints = Complaint.objects.all().order_by('-id')
+    requests_list = Request.objects.all().order_by('-id')
+
+    # Complaint Chart Data
+    complaint_data = Complaint.objects.values('complaint_type').annotate(count=Count('complaint_type'))
+    complaint_types = [c['complaint_type'] for c in complaint_data]
+    complaint_counts = [c['count'] for c in complaint_data]
+
+    # Request Chart Data
+    request_data = Request.objects.values('request_type').annotate(count=Count('request_type'))
+    request_types = [r['request_type'] for r in request_data]
+    request_counts = [r['count'] for r in request_data]
+
+    context = {
+        "total_complaints": total_complaints,
+        "total_requests": total_requests,
+        "complaints": complaints,
+        "requests": requests_list,
+        "complaint_types": complaint_types,
+        "complaint_counts": complaint_counts,
+        "request_types": request_types,
+        "request_counts": request_counts,
+    }
+
+    return render(request, "Mainpage.html", context)
+
+
+
+# views.py
+from django.shortcuts import render, redirect
+from .models import Complaint, Request, Supervisor
+
+def supervisor_tasks(request):
+
+    # Get supervisor ID from session
+    sid = request.session.get("supervisor_id")
+    if not sid:
+        return redirect("supervisor_login")
+
+    supervisor = Supervisor.objects.get(id=sid)
+
+    # Fetch tasks assigned to this supervisor
+    complaints = Complaint.objects.filter(supervisor=supervisor)
+    requests_qs = Request.objects.filter(supervisor=supervisor)
+
+    # Status counts
+    complaint_stats = {
+        "submitted": complaints.filter(status="submitted").count(),
+        "verified": complaints.filter(status="verified").count(),
+        "pending": complaints.filter(status="pending").count(),
+        "completed": complaints.filter(status="completed").count(),
+    }
+
+    request_stats = {
+        "submitted": requests_qs.filter(status="submitted").count(),
+        "verified": requests_qs.filter(status="verified").count(),
+        "pending": requests_qs.filter(status="pending").count(),
+        "completed": requests_qs.filter(status="completed").count(),
+    }
+
+    return render(request, "supervisor_tasks.html", {
+        "supervisor": supervisor,
+        "complaints": complaints,
+        "requests": requests_qs,
+        "complaint_stats": complaint_stats,
+        "request_stats": request_stats,
+    })

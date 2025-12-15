@@ -4,80 +4,116 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EO Complaints</title>
+
 <style>
+/* ───────────────────────────────────────────────
+   THEME VARIABLES
+─────────────────────────────────────────────── */
 :root {
-  --bg: #e3f9fb;        /* soft aqua lake-blue background */
-  --card-bg: #ffffff;   /* white card background */
-  --accent: #2b6777;    /* deep lake blue for titles */
-  --highlight: #e63946; /* light red accent for names */
-  --text: #1e4b56;      /* dark teal for general text */
-  --shadow: rgba(0, 0, 0, 0.1);
+  --bg1: #0a0d14;
+  --bg2: #121722;
+  --bg3: #1c2433;
+
+  --glass: rgba(255, 255, 255, 0.07);
+  --stroke: rgba(255, 255, 255, 0.15);
+
+  --neon-blue: #3e8cff;
+  --neon-purple: #b36bff;
+
+  --text-main: #ffffff;
+  --text-light: #c7c7c7;
+
+  --glow: 0 0 18px rgba(62, 140, 255, 0.45);
+  --shadow: 0 0 20px rgba(0,0,0,0.35);
 }
 
+/* ───────────────────────────────────────────────
+   GLOBAL STYLES
+─────────────────────────────────────────────── */
 body {
-  font-family: "Poppins", sans-serif;
-  background-color: var(--bg);
   margin: 0;
-  padding: 20px;
-  color: var(--text);
+  padding: 25px;
+  font-family: "Nunito", sans-serif;
+  background: linear-gradient(145deg, var(--bg1), var(--bg2), var(--bg3));
+  color: var(--text-main);
 }
 
+/* Gradient title */
 h1 {
   text-align: center;
-  margin-bottom: 30px;
-  color: var(--accent);
+  margin-bottom: 35px;
+  font-size: 2.3em;
+  background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+  -webkit-background-clip: text;
+  color: transparent;
+  font-weight: 800;
   letter-spacing: 1px;
 }
 
+/* ───────────────────────────────────────────────
+   GRID LAYOUT
+─────────────────────────────────────────────── */
 .cards-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 22px;
 }
 
-/* Base Card Style */
+/* ───────────────────────────────────────────────
+   GLASSMORPHIC CARD
+─────────────────────────────────────────────── */
 .card {
-  background: var(--card-bg);
-  border-radius: 12px;
-  padding: 18px 20px;
-  box-shadow: 0 4px 10px var(--shadow);
-  transition: all 0.3s ease;
-  border-left: 6px solid var(--accent);
+  background: var(--glass);
+  border-radius: 18px;
+  padding: 20px;
+  border: 1px solid var(--stroke);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow);
+  transition: 0.35s ease;
   cursor: pointer;
 }
 
-/* Hover effect */
+/* Neon border & lift on hover */
 .card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--glow);
+  border-color: var(--neon-blue);
 }
 
-/* Expanded (active) card */
+/* Expanded card (click) */
 .card.active {
   transform: scale(1.04);
-  background-color: #dff7fa;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+  border-color: var(--neon-purple);
+  box-shadow: 0 0 22px rgba(179,107,255,0.45);
 }
 
-/* Text Styles */
+/* Text styles */
 .card h3 {
-  margin: 0 0 10px 0;
-  color: var(--highlight);
+  margin: 0 0 12px 0;
+  font-size: 1.3em;
+  color: var(--neon-purple);
 }
 
 .card p {
-  margin: 5px 0;
+  margin: 6px 0;
   font-size: 0.95em;
-  color: var(--text);
+  color: var(--text-light);
+}
+
+.card strong {
+  color: var(--neon-blue);
 }
 
 /* Empty message */
-p[style*="text-align:center"] {
-  color: #555;
+.empty {
+  text-align: center;
+  margin-top: 30px;
+  color: var(--text-light);
   font-style: italic;
 }
 </style>
 </head>
+
 <body>
 
 <h1>📢 Complaints</h1>
@@ -86,7 +122,7 @@ p[style*="text-align:center"] {
 {% for complaint in complaints %}
   <div class="card">
     <h3>{{ complaint.name }}</h3>
-    <p><strong>user:</strong> {{ complaint.user }}</p>
+    <p><strong>User:</strong> {{ complaint.user }}</p>
     <p><strong>Phone:</strong> {{ complaint.phone }}</p>
     <p><strong>Address:</strong> {{ complaint.address }}</p>
     <p><strong>Description:</strong> {{ complaint.description }}</p>
@@ -94,19 +130,18 @@ p[style*="text-align:center"] {
     <p><strong>Supervisor:</strong> {{ complaint.supervisor_name }}</p>
   </div>
 {% empty %}
-  <p style="text-align:center;">No complaints found.</p>
+  <p class="empty">No complaints found.</p>
 {% endfor %}
 </div>
 
 <script>
-  // Toggle expand on click
-  document.querySelectorAll('.card').forEach(card => {
-    card.addEventListener('click', () => {
-      // Make sure only one card is active at a time
-      document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
-      card.classList.toggle('active');
-    });
+/* Card expand toggle */
+document.querySelectorAll('.card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
   });
+});
 </script>
 
 </body>

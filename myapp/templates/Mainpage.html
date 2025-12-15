@@ -219,14 +219,24 @@ form input:focus, form textarea:focus, form select:focus{
           <textarea name="address" id="address" rows="2" required></textarea>
         </div>
         <div>
-          <label for="supervisorDropdown">Supervisor Name:</label>
-          <select name="supervisor_name" id="supervisorDropdown" required>
-            <option value="">-- Select Supervisor --</option>
-            {% for s in supervisors %}
-              <option value="{{ s.supervisor_name }}">{{ s.supervisor_name }}</option>
-            {% endfor %}
-          </select>
-        </div>
+  <div>
+  <label for="areaDropdown">Area Name:</label>
+<select name="area_name" id="areaDropdown" required>
+  <option value="">-- Select Area --</option>
+  {% for area in areas %}
+    <option value="{{ area.name }}">{{ area.name }}</option>
+  {% endfor %}
+</select>
+</div>
+</div>
+        <div>
+    <!-- Optional: dynamically populate from Django
+    {% for s in supervisors %}
+        <option value="{{ s.area_name }}">{{ s.area_name }}</option>
+    {% endfor %} -->
+  </select>
+</div>
+
         <div class="full-width">
           <label>Complaint Type:</label>
           <div class="checkbox-group">
@@ -267,20 +277,43 @@ form input:focus, form textarea:focus, form select:focus{
     <div class="modal-content">
       <span class="close-btn" onclick="closeRequestModal()">&times;</span>
       <h2 style="margin-bottom:15px; color:#4f5dff;">Submit Request</h2>
+
       <form method="POST" action="{% url 'requestform' %}">
         {% csrf_token %}
+
+        <!-- Name -->
         <div>
           <label for="name">Name:</label>
           <input type="text" name="name" id="name" required>
         </div>
+
+        <!-- Phone -->
         <div>
           <label for="phone">Phone Number:</label>
           <input type="text" name="phone" id="phone" required>
         </div>
+
+        <!-- Address (You removed this by mistake — Added back) -->
         <div class="full-width">
           <label for="address">Address:</label>
           <textarea name="address" id="address" rows="2" required></textarea>
         </div>
+        <div>
+          <label for="name">Supervisor Name:</label>
+          <input type="text" name="name" id="name" required>
+        </div>
+        <!-- Area Name -->
+        <div class="full-width">
+          <label for="areaDropdown">Area Name:</label>
+<select name="area_name" id="areaDropdown" required>
+  <option value="">-- Select Area --</option>
+  <!-- {% for area in areas %}
+    <option value="{{ area.name }}">{{ area.name }}</option>
+  {% endfor %} -->
+</select>
+        </div>    
+
+        <!-- Request Type -->
         <div class="full-width">
           <label>Request Type:</label>
           <div class="checkbox-group">
@@ -289,7 +322,11 @@ form input:focus, form textarea:focus, form select:focus{
             <label class="checkbox-item"><input type="checkbox" name="requestType" value="Road / Traffic Issues"> Road / Traffic Issues</label>
             <label class="checkbox-item"><input type="checkbox" name="requestType" value="Electricity / Water Supply"> Electricity / Water Supply</label>
             <label class="checkbox-item"><input type="checkbox" name="requestType" value="Government Services"> Government Services</label>
-            <label class="checkbox-item"><input type="checkbox" name="requestType" value="Others"> Others:
+
+            <!-- Others -->
+            <label class="checkbox-item">
+              <input type="checkbox" name="requestType" value="Others">
+              Others:
               <input type="text" name="otherType" placeholder="Specify here">
             </label>
           </div>
@@ -297,8 +334,10 @@ form input:focus, form textarea:focus, form select:focus{
 
         <button type="submit" class="submit-btn">Submit Request</button>
       </form>
+
     </div>
-  </div>
+</div>
+
 
   <script>
     // Complaint modal

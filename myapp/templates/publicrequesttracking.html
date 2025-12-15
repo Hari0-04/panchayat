@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Track My Request</title>
+  <style>
+    :root {
+      --bg1: #0a0d14;
+      --bg2: #121722;
+      --neon-blue: #3e8cff;
+      --neon-purple: #b36bff;
+      --glass: rgba(255,255,255,0.07);
+      --glass-border: rgba(255,255,255,0.15);
+      --title: #ffffff;
+      --muted: #c7c7c7;
+      --radius-lg: 18px;
+      --glow: 0 0 18px rgba(62,140,255,0.45);
+      --card-shadow: 0 0 20px rgba(0,0,0,0.35);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      color: var(--title);
+      font-family: 'Nunito', Arial, sans-serif;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      color: var(--neon-blue);
+      text-shadow: var(--glow);
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+
+    /* SEARCH BOX */
+    .search-box {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      margin-bottom: 40px;
+      backdrop-filter: blur(8px);
+      box-shadow: var(--card-shadow);
+      text-align: center;
+    }
+
+    .search-box h2 {
+      color: var(--title);
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+    }
+
+    .search-form {
+      display: flex;
+      gap: 10px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .search-form input {
+      flex: 1;
+      padding: 15px;
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+      background: rgba(255,255,255,0.05);
+      color: var(--title);
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .search-form input::placeholder {
+      color: var(--muted);
+    }
+
+    .search-form button {
+      padding: 15px 30px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.3s;
+      font-size: 1rem;
+    }
+
+    .search-form button:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--glow);
+    }
+
+    /* STATUS TIMELINE */
+    .status-timeline {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      margin-bottom: 30px;
+      backdrop-filter: blur(8px);
+      box-shadow: var(--card-shadow);
+    }
+
+    .timeline {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      position: relative;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 25px;
+      left: 12.5%;
+      right: 12.5%;
+      height: 4px;
+      background: rgba(255,255,255,0.1);
+      z-index: 0;
+    }
+
+    .timeline-step {
+      flex: 1;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .timeline-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin: 0 auto 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      background: rgba(255,255,255,0.1);
+      border: 3px solid rgba(255,255,255,0.2);
+    }
+
+    .timeline-step.active .timeline-icon {
+      background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+      border-color: var(--neon-blue);
+      box-shadow: 0 0 20px rgba(62,140,255,0.6);
+      animation: pulse 2s infinite;
+    }
+
+    .timeline-step.completed .timeline-icon {
+      background: linear-gradient(135deg, #10b981, #059669);
+      border-color: #10b981;
+    }
+
+    .timeline-label {
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-weight: bold;
+    }
+
+    .timeline-step.active .timeline-label,
+    .timeline-step.completed .timeline-label {
+      color: var(--title);
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    /* TASK CARD */
+    .task-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 25px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(8px);
+      box-shadow: var(--card-shadow);
+      transition: transform 0.3s;
+    }
+
+    .task-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--glow);
+    }
+
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .task-header h3 {
+      color: var(--neon-blue);
+      margin: 0;
+      font-size: 1.3rem;
+    }
+
+    .status-badge {
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+
+    .status-badge.submitted {
+      background: rgba(251, 191, 36, 0.2);
+      color: #fbbf24;
+    }
+
+    .status-badge.verified {
+      background: rgba(62, 140, 255, 0.2);
+      color: var(--neon-blue);
+    }
+
+    .status-badge.pending {
+      background: rgba(179, 107, 255, 0.2);
+      color: var(--neon-purple);
+    }
+
+    .status-badge.completed {
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+    }
+
+    .task-details p {
+      margin: 10px 0;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .task-details strong {
+      color: var(--title);
+    }
+
+    .timestamp {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 10px;
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+
+    .no-results h2 {
+      color: var(--title);
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>🔍 Track Your Request</h1>
+      <p>Enter your phone number to view the status of your complaints and requests</p>
+    </div>
+
+    <!-- SEARCH BOX -->
+    <div class="search-box">
+      <h2>Enter Your Phone Number</h2>
+      <form method="GET" action="{% url 'public_track' %}" class="search-form">
+        <input 
+          type="tel" 
+          name="phone" 
+          placeholder="Enter your phone number" 
+          value="{{ phone }}"
+          required
+          pattern="[0-9]{10}"
+          maxlength="10">
+        <button type="submit">Track</button>
+      </form>
+    </div>
+
+    {% if phone %}
+      {% if complaints or requests %}
+        
+        <!-- COMPLAINTS -->
+        {% for c in complaints %}
+        <div class="status-timeline">
+          <div class="timeline">
+            <div class="timeline-step {% if c.status == 'submitted' or c.status == 'verified' or c.status == 'pending' or c.status == 'completed' %}completed{% endif %}">
+              <div class="timeline-icon">📝</div>
+              <div class="timeline-label">Submitted</div>
+            </div>
+            <div class="timeline-step {% if c.status == 'verified' %}active{% elif c.status == 'pending' or c.status == 'completed' %}completed{% endif %}">
+              <div class="timeline-icon">✓</div>
+              <div class="timeline-label">Verified</div>
+            </div>
+            <div class="timeline-step {% if c.status == 'pending' %}active{% elif c.status == 'completed' %}completed{% endif %}">
+              <div class="timeline-icon">⏳</div>
+              <div class="timeline-label">In Progress</div>
+            </div>
+            <div class="timeline-step {% if c.status == 'completed' %}active completed{% endif %}">
+              <div class="timeline-icon">✅</div>
+              <div class="timeline-label">Completed</div>
+            </div>
+          </div>
+
+          <div class="task-card">
+            <div class="task-header">
+              <h3>Complaint: {{ c.complaint_type }}</h3>
+              <span class="status-badge {{ c.status }}">{{ c.get_status_display }}</span>
+            </div>
+            
+            <div class="task-details">
+              <p><strong>Your Name:</strong> {{ c.user }}</p>
+              <p><strong>Location:</strong> {{ c.location }}</p>
+              <p><strong>Address:</strong> {{ c.address }}</p>
+              <p><strong>Description:</strong> {{ c.description }}</p>
+              <p><strong>Assigned Supervisor:</strong> {{ c.supervisor_name|default:"Pending Assignment" }}</p>
+              
+              <div class="timestamp">
+                <span>📅</span>
+                <span>Submitted on {{ c.date_time|date:"d M Y, h:i A" }}</span>
+              </div>
+              
+              {% if c.verified_date %}
+              <div class="timestamp">
+                <span>✓</span>
+                <span>Verified on {{ c.verified_date|date:"d M Y, h:i A" }}</span>
+              </div>
+              {% endif %}
+              
+              {% if c.pending_date %}
+              <div class="timestamp">
+                <span>⏳</span>
+                <span>Work started on {{ c.pending_date|date:"d M Y, h:i A" }}</span>
+              </div>
+              {% endif %}
+              
+              {% if c.completed_date %}
+              <div class="timestamp">
+                <span>✅</span>
+                <span>Completed on {{ c.completed_date|date:"d M Y, h:i A" }}</span>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+
+        <!-- REQUESTS -->
+        {% for r in requests %}
+        <div class="status-timeline">
+          <div class="timeline">
+            <div class="timeline-step {% if r.status == 'submitted' or r.status == 'verified' or r.status == 'pending' or r.status == 'completed' %}completed{% endif %}">
+              <div class="timeline-icon">📝</div>
+              <div class="timeline-label">Submitted</div>
+            </div>
+            <div class="timeline-step {% if r.status == 'verified' %}active{% elif r.status == 'pending' or r.status == 'completed' %}completed{% endif %}">
+              <div class="timeline-icon">✓</div>
+              <div class="timeline-label">Verified</div>
+            </div>
+            <div class="timeline-step {% if r.status == 'pending' %}active{% elif r.status == 'completed' %}completed{% endif %}">
+              <div class="timeline-icon">⏳</div>
+              <div class="timeline-label">In Progress</div>
+            </div>
+            <div class="timeline-step {% if r.status == 'completed' %}active completed{% endif %}">
+              <div class="timeline-icon">✅</div>
+              <div class="timeline-label">Completed</div>
+            </div>
+          </div>
+
+          <div class="task-card">
+            <div class="task-header">
+              <h3>Request: {{ r.request_type }}</h3>
+              <span class="status-badge {{ r.status }}">{{ r.get_status_display }}</span>
+            </div>
+            
+            <div class="task-details">
+              <p><strong>Your Name:</strong> {{ r.name }}</p>
+              <p><strong>Address:</strong> {{ r.address }}</p>
+              <p><strong>Assigned Supervisor:</strong> {{ r.supervisor_name|default:"Pending Assignment" }}</p>
+              
+              <div class="timestamp">
+                <span>📅</span>
+                <span>Submitted on {{ r.created_at|date:"d M Y, h:i A" }}</span>
+              </div>
+              
+              {% if r.verified_date %}
+              <div class="timestamp">
+                <span>✓</span>
+                <span>Verified on {{ r.verified_date|date:"d M Y, h:i A" }}</span>
+              </div>
+              {% endif %}
+              
+              {% if r.pending_date %}
+              <div class="timestamp">
+                <span>⏳</span>
+                <span>Work started on {{ r.pending_date|date:"d M Y, h:i A" }}</span>
+              </div>
+              {% endif %}
+              
+              {% if r.completed_date %}
+              <div class="timestamp">
+                <span>✅</span>
+                <span>Completed on {{ r.completed_date|date:"d M Y, h:i A" }}</span>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+
+      {% else %}
+        <div class="no-results">
+          <h2>No records found</h2>
+          <p>We couldn't find any complaints or requests with this phone number.</p>
+          <p>Please check your number and try again.</p>
+        </div>
+      {% endif %}
+    {% endif %}
+
+  </div>
+
+</body>
+</html>

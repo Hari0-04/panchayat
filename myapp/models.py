@@ -36,6 +36,7 @@ class Complaint(models.Model):
     user = models.CharField(max_length=100, null=True)
     phone = models.CharField(max_length=100, null=True)
     address = models.TextField(max_length=255, null=True)
+    area_name = models.CharField(max_length=100, null=True) 
     location = models.CharField(max_length=255, null=True)
     complaint_type = models.CharField(max_length=100, null=True)
     description = models.TextField(max_length=500, null=True)
@@ -43,12 +44,32 @@ class Complaint(models.Model):
     date_time = models.DateTimeField(default=timezone.now)
     supervisor_name = models.CharField(max_length=100, null=True)
 
+    status = models.CharField(
+        max_length=10,
+        choices=[
+            ("submitted", "Submitted"),
+            ("verified", "Verified"),
+            ("pending", "Pending"),
+            ("completed", "Completed"),
+        ],
+        default="submitted"
+    )
+
+    supervisor = models.ForeignKey(
+        'Supervisor',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
     def __str__(self):
         return f"{self.user} - {self.complaint_type}"
 
 
+
 # -------------------- REQUEST MODEL --------------------
 class Request(models.Model):
+
     REQUEST_TYPES = [
         ("Public Safety", "Public Safety"),
         ("Sanitation / Hygiene", "Sanitation / Hygiene"),
@@ -58,11 +79,32 @@ class Request(models.Model):
         ("Others", "Others"),
     ]
 
+    STATUS = [
+        ("submitted", "Submitted"),
+        ("verified", "Verified"),
+        ("pending", "Pending"),
+        ("completed", "Completed"),
+    ]
+
     name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=15)
-    address = models.TextField()
+    area_name = models.CharField(max_length=100, null=False, blank=False, default="Unknown Area")
+    address = models.TextField(null=True, blank=True)
     request_type = models.CharField(max_length=50, choices=REQUEST_TYPES)
     other_type = models.CharField(max_length=100, null=True, blank=True)
+
+    status = models.CharField(
+        max_length=15,
+        choices=STATUS,
+        default="submitted"
+    )
+
+    supervisor = models.ForeignKey(
+        'Supervisor',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
 
     def __str__(self):
         return self.name
@@ -91,20 +133,38 @@ class Achievement(models.Model):
 
 
 # -------------------- TASK MODEL --------------------
+from django.db import models
+from django.utils import timezone
+
 class Task(models.Model):
-    STATUS_CHOICES = (
-        ('verified', 'Verified'),
+    STATUS_CHOICES = [
         ('pending', 'Pending'),
+        ('verified', 'Verified'),
         ('completed', 'Completed'),
-    )
+    ]
+
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True, null=True)
     assigned_date = models.DateField(default=timezone.now)
     due_date = models.DateField(blank=True, null=True)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default='pending'
+    )
+
+    verified_by_supervisor = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True
+    )
+    verified_date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return self.title
+
+
 
 
 # -------------------- ADMIN MODEL --------------------
@@ -114,8 +174,13 @@ class Admins(models.Model):
 
 
 # -------------------- AREA MODEL --------------------
+from django.db import models
+
 class Area(models.Model):
     name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
 
 
 # -------------------- EO USER --------------------
@@ -152,7 +217,8 @@ from django.db import models
 
 class Supervisor(models.Model):
     supervisor_id = models.CharField(max_length=30, unique=True)
-    name = models.CharField(max_length=100)
+    supervisor_name = models.CharField(max_length=100)
+    area = models.ForeignKey(Area, on_delete=models.SET_NULL, null=True, blank=True)
     phone = models.CharField(max_length=15, blank=True, null=True)
     password = models.CharField(max_length=128)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -168,4 +234,6 @@ class Supervisor(models.Model):
         return self.supervisor_id
 
 
+
+# -------------------- AREA MODEL --------------------
 

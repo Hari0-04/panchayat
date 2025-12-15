@@ -42,8 +42,10 @@ urlpatterns = [
     # ADMIN MODULE
     path("mainadmin/", views.Mainpageadmin, name="Mainpageadmin"),
     path("Addsupervisor/", views.Add_supervisor, name="Add_supervisor"),
-    path("Addarea/", views.Add_area, name="Add_area"),
-    path("task/", views.Tasks, name="Tasks"),
+    # urls.py
+    path('admin/add-area/', views.add_area, name='add_area'),
+
+    path("tasks/", views.Tasks, name="tasks"),
     path("upload_profile/", views.upload_profile, name="upload_profile"),
     # path("create_user/", views.create_user, name="create_user"),
 
@@ -61,8 +63,15 @@ urlpatterns = [
     path("notifications/delete/<int:post_id>/", views.delete_post, name="delete_post"),
     path("forgotpassword/", views.Forgotpassword, name="Forgotpassword"),
     path("delete_user/<str:role>/<str:user_id>/", views.delete_user, name="delete_user"),
+    path("signup-list/", views.signup_list, name="signup_list"),
+    path("", views.dashboard_stats, name="dashboard"),
+    path("requestform/", views.requestform, name="requestform"),
+    path("admin/mainpage/", views.Mainpageadmin, name="mainpageadmin"),
+    # Supervisor dashboard / My Tasks page
+    
 
-  
+
+
 
 
 

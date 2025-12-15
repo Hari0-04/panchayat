@@ -4,113 +4,122 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EO Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --navy: #0a1a2b;
-      --teal: #007b88;
-      --teal-light: #11a7b5;
-      --gold: #f7d774;
-      --glass: rgba(255, 255, 255, 0.12);
-      --stroke: rgba(255,255,255,0.25);
+      /* Theme Colors */
+      --bg1: #0a0d14;
+      --bg2: #121722;
+      --bg3: #1c2433;
+
+      --glass: rgba(255, 255, 255, 0.07);
+      --stroke: rgba(255,255,255,0.15);
+
+      --neon-blue: #3e8cff;
+      --neon-purple: #b36bff;
+
+      --text-main: #ffffff;
+      --text-light: #c7c7c7;
+
+      --glow: 0 0 18px rgba(62,140,255,0.45);
+      --shadow: 0 0 20px rgba(0,0,0,0.35);
     }
 
     body {
       margin: 0;
       padding: 0;
-      font-family: "Poppins", sans-serif;
-      background: linear-gradient(135deg, var(--navy), var(--teal));
+      font-family: "Nunito", sans-serif;
+      background: linear-gradient(145deg, var(--bg1), var(--bg2), var(--bg3));
       min-height: 100vh;
       display: flex;
       justify-content: center;
+      color: var(--text-main);
     }
 
     .container {
       width: 95%;
       max-width: 900px;
-      padding: 25px;
+      padding: 28px;
       box-sizing: border-box;
     }
 
     /* HEADER */
     .header {
-      background: linear-gradient(135deg, var(--teal-light), var(--teal));
-      padding: 18px 25px;
-      border-radius: 18px;
-      color: white;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-      margin-bottom: 25px;
-      backdrop-filter: blur(10px);
+      padding: 20px 28px;
+      border-radius: 20px;
+      background: var(--glass);
       border: 1px solid var(--stroke);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
     }
 
     .header h1 {
       margin: 0;
-      font-size: 1.9em;
-      font-weight: 700;
-      letter-spacing: 0.5px;
+      font-size: 2em;
+      background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+      -webkit-background-clip: text;
+      color: transparent;
+      font-weight: 800;
     }
 
     .header div {
-      margin-top: 5px;
-      font-size: 1.1em;
-      font-weight: 500;
-      color: var(--gold);
+      margin-top: 8px;
+      font-size: 1.15em;
+      color: var(--text-light);
     }
 
     /* BUTTONS */
     .buttons {
       margin: 25px 0;
       display: flex;
-      gap: 18px;
+      gap: 20px;
       flex-wrap: wrap;
     }
 
     .btn {
-      flex: 1 1 160px;
+      flex: 1 1 180px;
       text-align: center;
-      padding: 15px 20px;
-      border-radius: 14px;
+      padding: 15px 22px;
+      border-radius: 18px;
       background: var(--glass);
       border: 1px solid var(--stroke);
-      color: white;
+      color: var(--text-main);
       font-weight: 600;
-      font-size: 1.05em;
+      font-size: 1.1em;
       text-decoration: none;
       cursor: pointer;
-      transition: 0.3s;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+      transition: 0.3s ease;
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
     }
 
     .btn:hover {
-      transform: scale(1.04);
-      background: rgba(255,255,255,0.20);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.35);
-      border-color: var(--gold);
+      transform: translateY(-6px);
+      box-shadow: var(--glow);
+      border-color: var(--neon-blue);
     }
 
-    /* PUBLIC USERS LIST */
+    /* USER CARDS */
     .public-users {
       display: none;
       flex-direction: column;
-      gap: 18px;
+      gap: 20px;
       margin-top: 20px;
     }
 
     .user-card {
       background: var(--glass);
-      padding: 20px;
-      border-radius: 15px;
-      backdrop-filter: blur(14px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+      padding: 22px;
+      border-radius: 18px;
+      backdrop-filter: blur(16px);
       border: 1px solid var(--stroke);
-      color: white;
+      box-shadow: var(--shadow);
     }
 
     .user-card strong {
-      color: var(--gold);
+      color: var(--neon-purple);
     }
 
     /* MOBILE */
@@ -140,20 +149,17 @@
   </div>
 
   <!-- PUBLIC USERS LIST -->
-  <div id="publicUsers" class="public-users">
-
-    {% if public_users %}
-      {% for user in public_users %}
-        <div class="user-card">
-          <p><strong>Name:</strong> {{ user.full_name|default:user.username }}</p>
-          <p><strong>Email:</strong> {{ user.email }}</p>
-          <p><strong>Phone:</strong> {{ user.phone|default:"-" }}</p>
-        </div>
-      {% endfor %}
-    {% else %}
-      <div class="user-card">No public signups available.</div>
-    {% endif %}
-
+{% if data %}
+  {% for user in data %}
+    <div class="user-card">
+      <p><strong>Name:</strong> {{ user.full_name|default:user.username }}</p>
+      <p><strong>Email:</strong> {{ user.email }}</p>
+      <p><strong>Phone:</strong> {{ user.phone|default:"-" }}</p>
+    </div>
+  {% endfor %}
+{% else %}
+  <div class="user-card">No public signups available.</div>
+{% endif %}
   </div>
 
 </div>

@@ -224,7 +224,7 @@ header h1 {
 
 <!-- Dashboard Buttons -->
 <div class="dashboard">
-  <a href="{% url 'Mainsupervisor' %}"><button class="dash-btn">🏠 Home</button></a>
+  <a href="{% url 'supervisor_tasks' %}"><button class="dash-btn">Tasks</button></a>
   <a href="{% url 'complaints_supervisor' %}"><button class="dash-btn">📝 Complaints</button></a>
   <a href="{% url 'requests_supervisor' %}"><button class="dash-btn">📋 Requests</button></a>
   <a href="{% url 'notification_page' %}"><button class="dash-btn">🔔 Notifications</button></a>
@@ -250,8 +250,7 @@ header h1 {
     <span class="close-btn" id="closePopup">&times;</span>
     <img src="https://via.placeholder.com/100" alt="Profile" id="profileImgLarge">
     <h3>{{ supervisor_username }}</h3>
-    <p>📞 {{ user.phoneno }}</p>
-    <p>🏠 {{ user.address }}</p>
+    <p>🏠 {{ id }}</p>
     <a href="{% url 'logout3' %}"><button class="logout-btn">Logout</button></a>
   </div>
 </div>
@@ -265,6 +264,7 @@ header h1 {
   profileTrigger.addEventListener("click", () => profilePopup.style.display = "flex");
   closePopup.addEventListener("click", () => profilePopup.style.display = "none");
 </script>
+
 
 </body>
 </html>
