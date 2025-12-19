@@ -57,7 +57,7 @@ urlpatterns = [
     # SUPERVISOR MAIN PAGE
     path("Mainsupervisor/", views.Mainsupervisor, name="Mainsupervisor"),
     # EXTRA / GENERAL
-    path("main/", views.Mainpage, name='mainpage'),
+    path("main/", views.mainpage, name='mainpage'),
     path("logoutsupervisor/", views.logout3, name="logout3"),
     path('notifications/', views.notification_page, name='notification_page'),
     path("notifications/delete/<int:post_id>/", views.delete_post, name="delete_post"),
@@ -67,6 +67,10 @@ urlpatterns = [
     path("", views.dashboard_stats, name="dashboard"),
     path("requestform/", views.requestform, name="requestform"),
     path("admin/mainpage/", views.Mainpageadmin, name="mainpageadmin"),
+    path('admin/add-area/', views.add_area, name='add_area'),
+    path('tasks/', views.AdminTasks, name='tasks')
+
+
     # Supervisor dashboard / My Tasks page
     
 

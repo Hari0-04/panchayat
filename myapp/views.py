@@ -10,7 +10,6 @@ from django.http import HttpResponse, JsonResponse
 import random
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
-from .models import *
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Supervisor, Signup, Admins, Post, Area, Complaint, Request
@@ -178,13 +177,19 @@ from .models import Complaint, Supervisor
 
 # View to add area
 # models.py
-class Area(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+# Area model is defined in the app's models.py and already imported at the top of this file,
+# so do not redefine it here to avoid duplicate definitions and syntax errors.
+from django.shortcuts import render, redirect
+from .models import Area
 
-    def __str__(self):
-        return self.name
+def add_area(request):
+    if request.method == "POST":
+        area_name = request.POST.get("name")
+        if area_name:
+            Area.objects.create(name=area_name)
+            return redirect("add_area")
 
-
+    return render(request, "add_area.html")
 
 
 # forgot password
@@ -489,7 +494,7 @@ from django.shortcuts import render
 from django.db.models import Count
 from .models import Complaint, Request, Supervisor, Area
 from django.utils import timezone
-def Tasks(request):
+def AdminTasks(request):
     # complaint status counts
     complaint_stats = Complaint.objects.values('status').annotate(count=Count('status'))
     complaint_stats = {
@@ -792,31 +797,23 @@ from .models import Supervisor, EOLogin
 
 logger = logging.getLogger(__name__)
 
-@csrf_exempt
 def delete_user(request, role, user_id):
-    logger.warning("DELETE endpoint hit - role=%s user_id=%s method=%s", role, user_id, request.method)
     if request.method != "POST":
-        return JsonResponse({"status": "invalid_method"}, status=405)
+        return JsonResponse({"error": "POST request required"}, status=400)
 
     try:
-        user_id = user_id.strip()
         if role == "supervisor":
-            deleted, _ = Supervisor.objects.filter(supervisor_id=user_id).delete()
+            user = Supervisor.objects.get(id=user_id)
         elif role == "eo":
-            deleted, _ = EOLogin.objects.filter(emp_id=user_id).delete()
+            user = EOLogin.objects.get(id=user_id)
         else:
-            return JsonResponse({"status": "error", "message": "Invalid role"}, status=400)
+            return JsonResponse({"error": "Invalid role"}, status=400)
 
-        logger.warning("delete() returned deleted=%s for role=%s id=%s", deleted, role, user_id)
-
-        if deleted == 0:
-            return JsonResponse({"status": "error", "message": "User not found"}, status=404)
-
-        return JsonResponse({"status": "success"})
+        user.delete()
+        return JsonResponse({"success": True})
 
     except Exception as e:
-        logger.exception("Exception while deleting user")
-        return JsonResponse({"status": "error", "message": str(e)}, status=400)
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 from .models import Signup
