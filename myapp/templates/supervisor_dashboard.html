@@ -1,0 +1,38 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Supervisor Dashboard</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  body{font-family:Arial,Helvetica,sans-serif;background:#f4f7fb;margin:0;padding:32px}
+  .wrap{max-width:1000px;margin:0 auto}
+  .top{display:flex;justify-content:space-between;align-items:center}
+  .card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 6px 20px rgba(20,30,60,0.06)}
+  .info{display:flex;gap:20px;align-items:center}
+  .btn{padding:10px 14px;border-radius:8px;background:#c62828;color:#fff;text-decoration:none}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <h1>Supervisor Dashboard</h1>
+      <div>
+        <a class="btn" href="{% url 'supervisor_logout' %}">Logout</a>
+      </div>
+    </div>
+
+    <div style="height:18px"></div>
+
+    <div class="card">
+      <h3>Welcome, {{ supervisor.name }}</h3>
+      <p><strong>Employee No:</strong> {{ supervisor.supervisor_id }}</p>
+      <p><strong>Phone:</strong> {{ supervisor.phone }}</p>
+      <p><strong>Created:</strong> {{ supervisor.created_at }}</p>
+    </div>
+
+    <!-- Add supervisor-specific features here -->
+  </div>
+</body>
+</html>

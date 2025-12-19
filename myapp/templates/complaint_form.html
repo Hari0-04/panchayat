@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% load static %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panchayat – Dashboard</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #f3f5fa;
+      --card-bg: rgba(255,255,255,0.85);
+      --text: #1a1a1a;
+      --gradient: linear-gradient(135deg,#6a5af9,#4f8cff);
+      --card-border: rgba(255,255,255,0.5);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
+
+    body {
+      background: var(--bg);
+      min-height: 100vh;
+      color: var(--text);
+    }
+
+    /* HEADER */
+    .header{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:80px;
+      background: var(--gradient);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      gap:15px;
+      padding:0 20px;
+      backdrop-filter: blur(10px);
+      border-bottom: 3px solid rgba(255,255,255,0.3);
+      z-index:999;
+    }
+    .header-logo{ height:50px; width:auto; object-fit:contain; }
+    .header-title{ font-size:22px; font-weight:800; }
+
+    /* DASHBOARD CONTENT */
+    .desktop-wrapper{
+      max-width:1100px;
+      margin:120px auto 40px;
+      padding:0 15px;
+    }
+    .section-title{ font-size:22px; font-weight:800; margin:25px 0 15px; color:#4f5dff; }
+    .button-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:15px; }
+    .desk-btn{
+      background: var(--card-bg);
+      padding:18px 0;
+      text-align:center;
+      border-radius:16px;
+      font-size:18px;
+      font-weight:700;
+      color:#4f5dff;
+      text-decoration:none;
+      backdrop-filter: blur(10px);
+      border:2px solid var(--card-border);
+      transition:0.25s ease;
+    }
+    .desk-btn:hover{ transform: translateY(-3px); background: rgba(255,255,255,0.95); }
+
+    .counter-row{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:15px; margin-bottom:20px; }
+    .counter-box{
+      background: var(--card-bg);
+      border-radius:16px;
+      padding:22px;
+      border:2px solid var(--card-border);
+      backdrop-filter: blur(10px);
+    }
+    .counter-title{ font-size:17px; font-weight:700; margin-bottom:8px; color:#4f5dff; }
+    .count-number{ font-size:36px; font-weight:900; color:#2b2e91; }
+
+    /* POPUP MODAL */
+    .modal-bg{
+      position: fixed;
+      top:0; left:0;
+      width:100%;
+      height:100%;
+      background: rgba(0,0,0,0.5);
+      display:none;
+      justify-content:center;
+      align-items:center;
+      z-index:1000;
+    }
+    .modal-content{
+      background: var(--card-bg);
+      padding:25px 30px;
+      border-radius:16px;
+      border:2px solid var(--card-border);
+      backdrop-filter: blur(10px);
+      max-width:600px;
+      width:90%;
+      max-height:90vh;
+      overflow-y:auto;
+      box-shadow:0 8px 25px rgba(0,0,0,0.2);
+      position: relative;
+    }
+    .close-btn{
+      position:absolute;
+      top:15px; right:15px;
+      font-size:22px;
+      font-weight:bold;
+      cursor:pointer;
+      color:#4f5dff;
+    }
+
+    /* FORM INSIDE MODAL */
+    form{ display:grid; grid-template-columns:1fr 1fr; gap:20px 20px; }
+    form label{ display:block; margin-bottom:6px; font-weight:600; color:var(--text); }
+    form input, form textarea, form select{
+      width:100%;
+      padding:10px;
+      border-radius:8px;
+      border:1px solid #ccc;
+      font-size:14px;
+      outline:none;
+      transition:0.3s;
+    }
+    form input:focus, form textarea:focus, form select:focus{
+      border-color:#4f8cff;
+      box-shadow:0 0 6px rgba(79,140,255,0.3);
+    }
+    .full-width{ grid-column:1 / -1; }
+    .checkbox-group{ display:flex; flex-wrap:wrap; gap:15px; }
+    .checkbox-item{ display:flex; align-items:center; gap:6px; font-size:14px; }
+    .checkbox-item input[type="text"]{ flex:1; padding:5px 6px; border-radius:6px; border:1px solid #ccc; margin-left:4px; }
+
+    .submit-btn{
+      grid-column:1 / -1;
+      padding:14px;
+      font-size:16px;
+      font-weight:700;
+      border-radius:50px;
+      border:none;
+      cursor:pointer;
+      background: var(--gradient);
+      color:#fff;
+      transition:0.3s;
+      margin-top:10px;
+    }
+    .submit-btn:hover{ transform: translateY(-3px); background: linear-gradient(135deg,#4f8cff,#6a5af9); }
+
+    @media(max-width:600px){
+      .desk-btn{ font-size:16px; padding:15px 0; }
+      form{ grid-template-columns:1fr; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <img src="{% static 'image/logo.png' %}" alt="Logo" class="header-logo">
+    <div class="header-title">Panchayat – Dashboard</div>
+  </div>
+
+  <div class="desktop-wrapper">
+
+    <div class="section-title">Main Actions</div>
+    <div class="button-grid">
+      <a class="desk-btn">Notifications</a>
+      <a href="javascript:void(0);" class="desk-btn" onclick="openModal()">Complaints</a>
+      <a href="{% url 'requestform' %}" class="desk-btn">Requests</a>
+    </div>
+
+    <div class="section-title">Your Records</div>
+    <div class="counter-row">
+      <div class="counter-box">
+        <div class="counter-title">Total Complaints</div>
+        <div class="count-number">{{ total_complaints }}</div>
+      </div>
+      <div class="counter-box">
+        <div class="counter-title">Total Requests</div>
+        <div class="count-number">{{ total_requests }}</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-bg" id="complaintModal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal()">&times;</span>
+      <h2 style="margin-bottom:15px; color:#4f5dff;">Submit Complaint</h2>
+      <form method="POST" enctype="multipart/form-data" action="{% url 'complaint_form' %}">
+        {% csrf_token %}
+
+        <div>
+          <label for="user">Name:</label>
+          <input type="text" name="user" id="user" required>
+        </div>
+        <div>
+          <label for="phone">Phone / Email:</label>
+          <input type="text" name="phone" id="phone" required>
+        </div>
+        <div class="full-width">
+          <label for="address">Address:</label>
+          <textarea name="address" id="address" rows="2" required></textarea>
+        </div>
+        <div>
+          <label for="supervisorDropdown">Supervisor Name:</label>
+          <select name="supervisor_name" id="supervisorDropdown" required>
+            <option value="">-- Select Supervisor --</option>
+         
+              <option value="{{ s.supervisor_name }}">{{ s.supervisor_name }}</option>
+        
+          </select>
+        </div>
+        <div class="full-width">
+          <label>Complaint Type:</label>
+          <div class="checkbox-group">
+            <label class="checkbox-item">
+              <input type="checkbox" name="complaintType" value="Public Safety"> Public Safety
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="complaintType" value="Sanitation / Hygiene"> Sanitation / Hygiene
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="complaintType" value="Road / Traffic Issues"> Road / Traffic Issues
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="complaintType" value="Electricity / Water Supply"> Electricity / Water Supply
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="complaintType" value="Government Services"> Government Services
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="complaintType" value="Others"> Others:
+              <input type="text" name="otherType" placeholder="Specify here">
+            </label>
+          </div>
+        </div>
+        <div>
+          <label for="location">Location of Issue:</label>
+          <input type="text" name="location" id="location" required>
+        </div>
+        <div>
+          <label for="datetime">Date & Time:</label>
+          <input type="datetime-local" name="datetime" id="datetime" required>
+        </div>
+        <div class="full-width">
+          <label for="description">Description:</label>
+          <textarea name="description" id="description" rows="4" required></textarea>
+        </div>
+        <div class="full-width">
+          <label for="file">Attach File:</label>
+          <input type="file" name="file" id="file">
+        </div>
+
+        <button type="submit" class="submit-btn">Submit Complaint</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function openModal() {
+      document.getElementById('complaintModal').style.display = 'flex';
+    }
+    function closeModal() {
+      document.getElementById('complaintModal').style.display = 'none';
+    }
+    // Close modal on outside click
+    window.onclick = function(event) {
+      const modal = document.getElementById('complaintModal');
+      if(event.target === modal){
+        modal.style.display = 'none';
+      }
+    }
+  </script>
+
+</body>
+</html>

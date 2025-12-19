@@ -43,7 +43,7 @@ class Area(models.Model):
 class Supervisor(models.Model):
     supervisor_id = models.CharField(max_length=30, unique=True)
     supervisor_name = models.CharField(max_length=100)
-    area = models.ForeignKey(Area, on_delete=models.SET_NULL, null=True, blank=True)
+    area = models.ForeignKey("Area", on_delete=models.SET_NULL, null=True, blank=True)
     phone = models.CharField(max_length=15, blank=True, null=True)
     password = models.CharField(max_length=128)
     created_at = models.DateTimeField(auto_now_add=True)

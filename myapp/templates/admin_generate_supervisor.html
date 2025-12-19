@@ -1,0 +1,19 @@
+<h2>Create Supervisor Login</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    
+    <input type="text" name="name" placeholder="Supervisor Name" required><br><br>
+    <input type="text" name="phone" placeholder="Phone Number" required><br><br>
+
+    <!-- Auto suggestion: SUPER-001, SUPER-002 etc -->
+    <input type="text" name="supervisor_id" placeholder="Supervisor ID (ex: SUPER-001)" required><br><br>
+
+    <input type="password" name="password" placeholder="Set Password" required><br><br>
+
+    <button type="submit">Create Supervisor</button>
+</form>
+
+{% if message %}
+  <p>{{ message }}</p>
+{% endif %}

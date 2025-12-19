@@ -14,6 +14,8 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Supervisor, Signup, Admins, Post, Area, Complaint, Request
 from django.contrib.auth.models import User
+from .models import Area, Supervisor, Complaint, Request
+
 
 
 
@@ -174,22 +176,6 @@ def logout4(request):
 
 from django.shortcuts import render, get_object_or_404
 from .models import Complaint, Supervisor
-
-# View to add area
-# models.py
-# Area model is defined in the app's models.py and already imported at the top of this file,
-# so do not redefine it here to avoid duplicate definitions and syntax errors.
-from django.shortcuts import render, redirect
-from .models import Area
-
-def add_area(request):
-    if request.method == "POST":
-        area_name = request.POST.get("name")
-        if area_name:
-            Area.objects.create(name=area_name)
-            return redirect("add_area")
-
-    return render(request, "add_area.html")
 
 
 # forgot password
@@ -418,19 +404,15 @@ def Add_supervisor(request):
     return render(request, "Addsupervisor.html")
 
 # View to add area
-def Add_area(request):
+def add_area(request):
     if request.method == "POST":
-        name = request.POST.get('name')
-
-        if Area.objects.filter(name=name).exists():
-            messages.error(request, "❌ Area already exists!")
-        else:
-            Area.objects.create(name=name)
+        area_name = request.POST.get("name")
+        if area_name:
+            Area.objects.create(name=area_name)
             messages.success(request, "✅ Area added successfully!")
+            return redirect("add_area")
+    return render(request, "add_area.html")
 
-        return redirect('Mainpageadmin')
-
-    return render(request, "Add_area.html")
 
 
 
